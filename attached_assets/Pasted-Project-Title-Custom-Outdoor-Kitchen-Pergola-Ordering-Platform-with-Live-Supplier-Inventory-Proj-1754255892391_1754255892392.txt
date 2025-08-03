@@ -1,0 +1,96 @@
+Project Title:
+Custom Outdoor Kitchen & Pergola Ordering Platform with Live Supplier Inventory
+
+Project Description:
+We are building a web-based platform that allows customers to order outdoor kitchens and pergolas based only on live stock availability from our manufacturers in China. The site will serve as a B2C frontend and a backend automation system that routes each order directly to the correct supplier for fulfillment.
+
+Our role is to receive orders, validate supplier stock, and facilitate DDP shipping directly to the customer’s address. The platform will only display products and configurations that are currently available in stock from one or more manufacturers.
+
+Core Features:
+🛍️ Live Product Catalogue (Stock-Based):
+Display only in-stock outdoor kitchen and pergola models (via supplier feed/API or manual sync)
+
+Group products by:
+
+Type (e.g., modular kitchen, built-in grill unit, pergola)
+
+Dimensions and layout options (L-shape, island, straight)
+
+Available materials/finishes
+
+Show current stock levels, estimated shipping times, and originating supplier
+
+Allow multiple suppliers with clearly assigned products
+
+🧰 Product Customisation (Conditional):
+Allow limited customisation based on available modules from stock (not full design-your-own)
+
+For example:
+
+Add-ons like sink units, fridge cabinets, drawer sets
+
+Pergola options: size, side panels, louvered roof, motorised/manual
+
+🔗 Supplier Integration:
+Real-time or batch sync with manufacturers via:
+
+API feed
+
+CSV upload
+
+Google Sheets/Excel sync
+
+Only available SKUs are shown to customers
+
+Auto-generate formatted purchase orders or emails to suppliers after customer checkout
+
+📦 Order Fulfilment Workflow:
+Customers place orders via website
+
+Admin system sends order details to supplier (automated or semi-automated)
+
+System updates status: Order sent, Confirmed, Shipped, Delivered
+
+Option to upload tracking details
+
+🛒 Customer Experience:
+Easy browsing of in-stock items only
+
+Customise from pre-approved modules
+
+Transparent DDP pricing (incl. shipping, VAT, and import duty)
+
+Online payment (Stripe/PayPal)
+
+Confirmation emails and tracking updates
+
+⚙️ Admin Dashboard:
+View and manage all customer orders
+
+View real-time supplier inventory
+
+Assign suppliers to products
+
+Trigger/send orders manually if needed
+
+Track customer delivery status
+
+Technology Stack Suggestions:
+Frontend: React + Tailwind or Next.js
+
+Backend: Node.js / Express with Firebase or Supabase
+
+Database: Firestore or MongoDB
+
+Auth: Firebase Auth or Clerk
+
+Integrations: Stripe, SendGrid, Google Sheets, Supplier APIs
+
+Hosting: Vercel, Netlify, or Replit-hosted
+
+Optional Extras (Future-Ready):
+Customer account area (order history, downloads, reorder options)
+
+AI chatbot for product guidance
+
+Bulk order handling for contractors or designers
