@@ -1,14 +1,6 @@
 # Overview
 
-This is a Custom Outdoor Kitchen & Pergola Ordering Platform that allows customers to order outdoor kitchens and pergolas based on live stock availability from manufacturers in China. The platform serves as a B2C frontend with backend automation that routes orders directly to suppliers for fulfillment. The system only displays products and configurations that are currently available in stock from one or more manufacturers.
-
-## Key Features
-- Live product catalog based on supplier inventory
-- Product customization with pre-approved modules
-- Real-time supplier integration and inventory sync
-- Automated order fulfillment workflow
-- DDP pricing with integrated payments
-- Admin dashboard for order and supplier management
+This is a business consulting website for a firm that specializes in startup and growth solutions for entrepreneurs. The application provides information about different consulting packages, displays service offerings, and includes a contact form for potential clients to inquire about services. The website presents a professional consulting business with three main packages: Startup Solutions, Launch & Growth Accelerator, and Ongoing Support Solutions, along with optional add-on modules.
 
 # User Preferences
 
@@ -36,26 +28,17 @@ Preferred communication style: Simple, everyday language.
 - **Connection**: Neon Database serverless PostgreSQL connection
 - **Schema Management**: Drizzle Kit for database migrations and schema management
 - **Development Storage**: In-memory storage implementation for development/testing
-- **Data Models**: Suppliers, products, inventory, orders, and customer data with comprehensive type definitions
+- **Data Models**: User accounts and contact form submissions with proper type definitions
 
 ## Database Schema
-- **Suppliers Table**: Manufacturer information and contact details
-- **Categories Table**: Product categories (outdoor kitchens, pergolas, etc.)
-- **Products Table**: Outdoor kitchen and pergola models with specifications
-- **Inventory Table**: Real-time stock levels for each product at each supplier
-- **Product Options Table**: Customizable add-ons and modules
-- **Customers Table**: Customer information and shipping addresses
-- **Orders Table**: Customer orders with status tracking
-- **Order Items Table**: Individual products within orders
-- **Admin Users Table**: Administrative access for order management
+- **Users Table**: Basic user authentication with username/password
+- **Contact Submissions Table**: Stores client inquiries with name, email, message, package selection, and timestamps
 - **Type Safety**: Full TypeScript integration with Drizzle-Zod for runtime validation
 
-## Core Business Logic
-- **Inventory Management**: Real-time stock tracking and availability
-- **Order Processing**: Automated order routing to appropriate suppliers
-- **Customer Management**: Account creation and order history
-- **Supplier Integration**: API connections for inventory sync and order fulfillment
-- **Storage Interface**: Abstracted storage layer for flexible data persistence
+## Authentication and Authorization
+- **Session Management**: Basic session handling with PostgreSQL session store
+- **User Management**: Simple username/password authentication system
+- **Storage Interface**: Abstracted storage layer allowing for different implementations (memory vs database)
 
 ## External Dependencies
 
