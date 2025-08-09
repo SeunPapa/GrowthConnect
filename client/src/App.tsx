@@ -5,17 +5,17 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
-import StartupSolutions from "@/pages/services/startup-solutions";
-import GrowthAccelerator from "@/pages/services/growth-accelerator";
-import OngoingSupport from "@/pages/services/ongoing-support";
+import StartupSolutions from "@/pages/packages/startup-solutions";
+import GrowthAccelerator from "@/pages/packages/growth-accelerator";
+import OngoingSupport from "@/pages/packages/ongoing-support";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/services/startup-solutions" component={StartupSolutions} />
-      <Route path="/services/growth-accelerator" component={GrowthAccelerator} />
-      <Route path="/services/ongoing-support" component={OngoingSupport} />
+      <Route path="/packages/startup-solutions" component={StartupSolutions} />
+      <Route path="/packages/growth-accelerator" component={GrowthAccelerator} />
+      <Route path="/packages/ongoing-support" component={OngoingSupport} />
       <Route component={NotFound} />
     </Switch>
   );

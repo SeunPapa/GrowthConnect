@@ -124,7 +124,7 @@ export default function StartupSolutions() {
       {/* Detailed Services */}
       <section className="py-16 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">Detailed Service Breakdown</h2>
+          <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">Services Included in This Package</h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="bg-white">
@@ -245,7 +245,7 @@ export default function StartupSolutions() {
             Start with a Free Initial Consultation
           </h2>
           <p className="text-xl text-primary-foreground/90 mb-8">
-            Discover how our services can help accelerate your business growth and create a clear path to success. 
+            Discover how our Startup Solutions package can help validate your business idea and create a roadmap for success. 
             No commitment required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -16,16 +16,16 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
       onSelectPackage(packageType);
     }
     
-    // Navigate to the appropriate service detail page
+    // Navigate to the appropriate package detail page
     switch (packageType) {
       case "startup":
-        setLocation("/services/startup-solutions");
+        setLocation("/packages/startup-solutions");
         break;
       case "growth":
-        setLocation("/services/growth-accelerator");
+        setLocation("/packages/growth-accelerator");
         break;
       case "ongoing":
-        setLocation("/services/ongoing-support");
+        setLocation("/packages/ongoing-support");
         break;
       default:
         // Fallback to scroll to contact form if no matching route
