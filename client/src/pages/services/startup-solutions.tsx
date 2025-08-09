@@ -224,13 +224,13 @@ export default function StartupSolutions() {
                 </div>
                 <h3 className="text-xl font-semibold text-neutral-900 mb-3">Free Initial Consultation</h3>
                 <p className="text-neutral-600 mb-4">
-                  Start with a complimentary 45-minute consultation to discuss your business idea and determine if our services are the right fit for your needs.
+                  Start with a complimentary consultation to discuss your business needs and determine how our services can best support your goals.
                 </p>
                 <ul className="text-sm text-neutral-500 space-y-1">
-                  <li>• 45-minute consultation</li>
-                  <li>• Business assessment</li>
-                  <li>• Service recommendations</li>
-                  <li>• No obligation</li>
+                  <li>• Comprehensive business assessment</li>
+                  <li>• Personalized service recommendations</li>
+                  <li>• Clear next steps and roadmap</li>
+                  <li>• No obligation or commitment required</li>
                 </ul>
               </CardContent>
             </Card>
@@ -242,10 +242,10 @@ export default function StartupSolutions() {
       <section id="free-consultation" className="py-20 bg-primary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Start with a Free 45-Minute Consultation
+            Start with a Free Initial Consultation
           </h2>
           <p className="text-xl text-primary-foreground/90 mb-8">
-            Discover how our Startup Solutions package can help validate your business idea and create a roadmap for success. 
+            Discover how our services can help accelerate your business growth and create a clear path to success. 
             No commitment required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

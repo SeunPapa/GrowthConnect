@@ -376,15 +376,15 @@ export default function OngoingSupport() {
                 <div className="bg-accent/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Calendar className="h-6 w-6 text-accent" />
                 </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">Free Assessment Session</h3>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-3">Free Initial Consultation</h3>
                 <p className="text-neutral-600 mb-4">
-                  Comprehensive business assessment to identify your ongoing support needs and recommend the best service model for your situation.
+                  Start with a complimentary consultation to discuss your business needs and determine how our services can best support your goals.
                 </p>
                 <ul className="text-sm text-neutral-500 space-y-1">
-                  <li>• 45-minute assessment</li>
-                  <li>• Current state analysis</li>
-                  <li>• Support needs evaluation</li>
-                  <li>• Custom recommendations</li>
+                  <li>• Comprehensive business assessment</li>
+                  <li>• Personalized service recommendations</li>
+                  <li>• Clear next steps and roadmap</li>
+                  <li>• No obligation or commitment required</li>
                 </ul>
               </CardContent>
             </Card>
@@ -396,16 +396,16 @@ export default function OngoingSupport() {
       <section id="free-consultation" className="py-20 bg-primary">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Start with a Free Business Assessment
+            Start with a Free Initial Consultation
           </h2>
           <p className="text-xl text-primary-foreground/90 mb-8">
-            Let's evaluate your current business situation and determine the best ongoing support model for your needs. 
-            No commitment required - just valuable insights for your business.
+            Discover how our services can help accelerate your business growth and create a clear path to success. 
+            No commitment required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/#contact">
               <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-neutral-100">
-                Book Free Assessment
+                Book Free Consultation
               </Button>
             </Link>
             <Link href="/">
