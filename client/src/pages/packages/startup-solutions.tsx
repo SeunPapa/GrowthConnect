@@ -186,15 +186,16 @@ export default function StartupSolutions() {
                 <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                   <Scale className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold text-neutral-900 mb-3">Legal & Structural Guidance</h3>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-3">Legal Structure & Business Plan Setup</h3>
                 <p className="text-neutral-600 mb-4">
-                  Expert advice on business registration, legal structure selection, and compliance requirements to ensure you start on the right legal foundation.
+                  Expert advice on business registration, legal structure selection, and compliance requirements combined with business plan development to ensure you start on the right foundation.
                 </p>
                 <ul className="text-sm text-neutral-500 space-y-1">
-                  <li>• Business structure recommendations</li>
-                  <li>• Registration process guidance</li>
-                  <li>• Tax obligations overview</li>
-                  <li>• Essential legal documents list</li>
+                  <li>• Business structure recommendations (LLC, Corporation, etc.)</li>
+                  <li>• Registration process guidance and documentation</li>
+                  <li>• Tax obligations and compliance overview</li>
+                  <li>• Essential legal documents checklist</li>
+                  <li>• Business plan template and guidance</li>
                 </ul>
               </CardContent>
             </Card>

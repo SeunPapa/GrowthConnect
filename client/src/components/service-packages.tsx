@@ -55,7 +55,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                   <Rocket className="h-8 w-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold text-neutral-900 mb-2">Startup Solutions</h3>
-                <p className="text-neutral-500 mb-4">"Starting Out Right"</p>
+                <p className="text-neutral-500 mb-4">Starting Out Right</p>
                 <div className="text-3xl font-bold text-primary">£500+</div>
               </div>
               
@@ -89,8 +89,8 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <li className="flex items-start">
                   <Scale className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
-                    <span className="font-medium">Legal & Structural Guidance</span>
-                    <p className="text-sm text-neutral-500">Registration and compliance advice</p>
+                    <span className="font-medium">Legal Structure & Business Plan Setup</span>
+                    <p className="text-sm text-neutral-500">Business registration, legal structure, and compliance guidance</p>
                   </div>
                 </li>
                 <li className="flex items-start">
