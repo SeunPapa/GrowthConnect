@@ -35,12 +35,6 @@ export default function Navigation() {
                 onClick={() => scrollToSection("packages")}
                 className="text-neutral-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
               >
-                Services
-              </button>
-              <button 
-                onClick={() => scrollToSection("packages")}
-                className="text-neutral-500 hover:text-primary px-3 py-2 text-sm font-medium transition-colors"
-              >
                 Packages
               </button>
               <button 
@@ -76,12 +70,6 @@ export default function Navigation() {
                 className="block w-full text-left px-3 py-2 text-base font-medium text-neutral-900 hover:text-primary transition-colors"
               >
                 Home
-              </button>
-              <button 
-                onClick={() => scrollToSection("packages")}
-                className="block w-full text-left px-3 py-2 text-base font-medium text-neutral-500 hover:text-primary transition-colors"
-              >
-                Services
               </button>
               <button 
                 onClick={() => scrollToSection("packages")}
