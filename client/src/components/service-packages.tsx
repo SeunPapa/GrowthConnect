@@ -2,19 +2,36 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, TrendingUp, RotateCcw, Brain, FileText, Search, Scale, Mail, BarChart3, Palette, Settings, PoundSterling, Handshake } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface ServicePackagesProps {
   onSelectPackage?: (packageType: string) => void;
 }
 
 export default function ServicePackages({ onSelectPackage }: ServicePackagesProps) {
+  const [, setLocation] = useLocation();
+
   const handleSelectPackage = (packageType: string) => {
     if (onSelectPackage) {
       onSelectPackage(packageType);
     }
-    // Scroll to contact form
-    const contactSection = document.getElementById("contact");
-    contactSection?.scrollIntoView({ behavior: "smooth" });
+    
+    // Navigate to the appropriate service detail page
+    switch (packageType) {
+      case "startup":
+        setLocation("/services/startup-solutions");
+        break;
+      case "growth":
+        setLocation("/services/growth-accelerator");
+        break;
+      case "ongoing":
+        setLocation("/services/ongoing-support");
+        break;
+      default:
+        // Fallback to scroll to contact form if no matching route
+        const contactSection = document.getElementById("contact");
+        contactSection?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
