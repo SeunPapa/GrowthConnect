@@ -67,7 +67,7 @@ export default function OngoingSupport() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-accent flex-shrink-0" />
-                  <span className="text-neutral-700">Monthly retainer packages (£1,500/month)</span>
+                  <span className="text-neutral-700">Monthly retainer packages (from £1,500/month)</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-accent flex-shrink-0" />
@@ -147,7 +147,7 @@ export default function OngoingSupport() {
                   <Repeat className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Monthly Retainer</CardTitle>
-                <div className="text-2xl font-bold text-primary">£500-£2,000/month</div>
+                <div className="text-2xl font-bold text-primary">From £1500/month</div>
               </CardHeader>
               <CardContent>
                 <p className="text-neutral-600 mb-6">
