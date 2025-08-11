@@ -187,7 +187,7 @@ export default function OngoingSupport() {
                   <Settings className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>À La Carte Services</CardTitle>
-                <div className="text-2xl font-bold text-primary">Pay Per Project</div>
+                <div className="text-2xl font-bold text-primary">Project-Based Pricing</div>
               </CardHeader>
               <CardContent>
                 <p className="text-neutral-600 mb-6">
@@ -198,14 +198,14 @@ export default function OngoingSupport() {
                     <Brain className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                     <div>
                       <span className="font-medium">Strategic Consultation</span>
-                      <p className="text-sm text-neutral-500">£150/hour or project-based</p>
+                      <p className="text-sm text-neutral-500">Hourly or project-based consultation</p>
                     </div>
                   </li>
                   <li className="flex items-start">
                     <Settings className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                     <div>
                       <span className="font-medium">Process Optimization</span>
-                      <p className="text-sm text-neutral-500">£500-£2,000 per project</p>
+                      <p className="text-sm text-neutral-500">Customized project pricing</p>
                     </div>
                   </li>
                   <li className="flex items-start">
@@ -216,11 +216,7 @@ export default function OngoingSupport() {
                     </div>
                   </li>
                 </ul>
-                <div className="space-y-2 text-sm text-neutral-500 mb-6">
-                  <p><strong>Single Session:</strong> £150 (90 minutes)</p>
-                  <p><strong>Mini Project:</strong> £500-£1,000</p>
-                  <p><strong>Major Project:</strong> £1,000-£5,000</p>
-                </div>
+
               </CardContent>
             </Card>
 
@@ -231,7 +227,7 @@ export default function OngoingSupport() {
                   <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Workshops & Training</CardTitle>
-                <div className="text-2xl font-bold text-primary">£100-£300/person</div>
+                <div className="text-2xl font-bold text-primary">Per Person Pricing</div>
               </CardHeader>
               <CardContent>
                 <p className="text-neutral-600 mb-6">
@@ -260,11 +256,7 @@ export default function OngoingSupport() {
                     </div>
                   </li>
                 </ul>
-                <div className="space-y-2 text-sm text-neutral-500 mb-6">
-                  <p><strong>Half-day:</strong> £100/person (4 hours)</p>
-                  <p><strong>Full-day:</strong> £200/person (8 hours)</p>
-                  <p><strong>Multi-day:</strong> £300/person (2-3 days)</p>
-                </div>
+
               </CardContent>
             </Card>
           </div>
