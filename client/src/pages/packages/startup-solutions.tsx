@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, CheckCircle, Brain, FileText, Search, Scale, Mail, Clock, Users, Target, DollarSign, Calendar } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function StartupSolutions() {
+  const [, setLocation] = useLocation();
+
   const handleConsultation = () => {
-    // Scroll to free consultation section
-    const consultationSection = document.getElementById("free-consultation");
-    consultationSection?.scrollIntoView({ behavior: "smooth" });
+    setLocation("/get-started");
   };
 
   return (
