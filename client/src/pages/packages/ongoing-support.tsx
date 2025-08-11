@@ -67,7 +67,7 @@ export default function OngoingSupport() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-accent flex-shrink-0" />
-                  <span className="text-neutral-700">Monthly retainer packages (£500-£2,000/month)</span>
+                  <span className="text-neutral-700">Monthly retainer packages (£1,500/month)</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <CheckCircle className="h-6 w-6 text-accent flex-shrink-0" />
@@ -176,11 +176,7 @@ export default function OngoingSupport() {
                     </div>
                   </li>
                 </ul>
-                <div className="space-y-2 text-sm text-neutral-500 mb-6">
-                  <p><strong>Essential (£500/month):</strong> 2 hours monthly consultation</p>
-                  <p><strong>Growth (£1,000/month):</strong> 4 hours monthly + email support</p>
-                  <p><strong>Premium (£2,000/month):</strong> 8 hours monthly + priority access</p>
-                </div>
+
               </CardContent>
             </Card>
 

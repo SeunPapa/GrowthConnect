@@ -205,7 +205,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                   <RotateCcw className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
                     <span className="font-medium">Monthly Retainer</span>
-                    <p className="text-sm text-neutral-500">£500–£2,000/month ongoing support</p>
+                    <p className="text-sm text-neutral-500">£1,500/month ongoing support</p>
                   </div>
                 </li>
                 <li className="flex items-start">
