@@ -106,7 +106,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 onClick={() => handleSelectPackage("startup")}
                 className="w-full bg-primary text-white hover:bg-secondary transition-colors"
               >
-                Get Started
+                Learn More
               </Button>
             </CardContent>
           </Card>
@@ -178,7 +178,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 onClick={() => handleSelectPackage("growth")}
                 className="w-full bg-primary text-white hover:bg-secondary transition-colors"
               >
-                Choose This Package
+                Learn More
               </Button>
             </CardContent>
           </Card>
