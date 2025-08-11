@@ -176,7 +176,7 @@ export default function Home() {
             <div className="flex items-center mb-4 md:mb-0">
               <div className="text-xl font-bold text-white">
                 <span className="text-primary mr-2">📈</span>
-                GrowthPro
+                Growth Accelerators
               </div>
             </div>
             <div className="flex items-center space-x-6">
@@ -193,7 +193,7 @@ export default function Home() {
           </div>
           <div className="border-t border-neutral-800 mt-8 pt-8 text-center">
             <p className="text-neutral-400 text-sm">
-              © 2024 GrowthPro. All rights reserved. 
+              © 2024 Growth Accelerators. All rights reserved. 
               Helping entrepreneurs build successful businesses since 2020.
             </p>
           </div>

@@ -1,6 +1,11 @@
 # Overview
 
-This is a business consulting website for a firm that specializes in startup and growth solutions for entrepreneurs. The application provides information about different consulting packages, where each package contains multiple services, and includes a contact form for potential clients to inquire about services. The website presents a professional consulting business with three main packages: Startup Solutions, Launch & Growth Accelerator, and Ongoing Support Solutions, along with optional add-on modules.
+This is a business consulting website for "Growth Accelerators" - a firm that specializes in startup and growth solutions for entrepreneurs. The application provides information about different consulting packages, where each package contains multiple services, and includes a contact form for potential clients to inquire about services. The website presents a professional consulting business with three main packages: Startup Solutions, Launch & Growth Accelerator, and Ongoing Support Solutions, along with optional add-on modules.
+
+## Recent Changes
+- Completed rebrand from "Growth Pro" to "Growth Accelerators" across all components
+- Simplified pricing displays removing detailed cost breakdowns 
+- Implemented lead qualification flow routing all buttons to friction page
 
 ## Structure Clarification
 - **Packages**: The main offerings (Startup Solutions, Growth Accelerator, Ongoing Support)

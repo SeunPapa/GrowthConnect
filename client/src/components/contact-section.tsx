@@ -84,7 +84,7 @@ export default function ContactSection() {
                 <Mail className="h-6 w-6 text-primary mr-4" />
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-neutral-300">hello@growthpro.co.uk</p>
+                  <p className="text-neutral-300">hello@growthaccelerators.co.uk</p>
                 </div>
               </div>
               <div className="flex items-center">

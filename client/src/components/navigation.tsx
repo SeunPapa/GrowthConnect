@@ -25,7 +25,7 @@ export default function Navigation() {
             <div className="flex-shrink-0">
               <div className="text-2xl font-bold text-primary flex items-center">
                 <TrendingUp className="h-6 w-6 mr-2" />
-                <span>GrowthPro</span>
+                <span>Growth Accelerators</span>
               </div>
             </div>
           </div>
