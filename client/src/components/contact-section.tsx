@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Mail, Phone, Clock } from "lucide-react";
+
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -76,36 +76,9 @@ export default function ContactSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
+        <div className="max-w-lg mx-auto">
           <div>
-            <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <Mail className="h-6 w-6 text-primary mr-4" />
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-neutral-300">hello@growthaccelerators.co.uk</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Phone className="h-6 w-6 text-primary mr-4" />
-                <div>
-                  <p className="font-medium">Phone</p>
-                  <p className="text-neutral-300">+44 20 1234 5678</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-6 w-6 text-primary mr-4" />
-                <div>
-                  <p className="font-medium">Business Hours</p>
-                  <p className="text-neutral-300">Mon-Fri: 9AM-6PM GMT</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-bold mb-6">Send a Message</h3>
+            <h3 className="text-2xl font-bold mb-6 text-center">Send a Message</h3>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
