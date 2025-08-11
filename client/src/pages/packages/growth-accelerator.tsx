@@ -42,11 +42,8 @@ export default function GrowthAccelerator() {
             <p className="text-xl text-neutral-600 mb-8">
               Complete scaling solution for entrepreneurs ready to launch or scale their business with comprehensive support and strategic guidance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex justify-center">
               <div className="text-3xl font-bold text-primary">From £2000</div>
-              <Button size="lg" onClick={handleConsultation} className="bg-primary text-white hover:bg-secondary">
-                Get Your Free Consultation
-              </Button>
             </div>
           </div>
         </div>
