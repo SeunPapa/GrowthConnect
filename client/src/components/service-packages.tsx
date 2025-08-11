@@ -56,7 +56,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 </div>
                 <h3 className="text-2xl font-bold text-neutral-900 mb-2">Startup Solutions</h3>
                 <p className="text-neutral-500 mb-4">Starting Out Right</p>
-                <div className="text-3xl font-bold text-primary">£500+</div>
+                <div className="text-3xl font-bold text-primary">From £750</div>
               </div>
               
               <div className="mb-6">

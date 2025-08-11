@@ -43,7 +43,7 @@ export default function StartupSolutions() {
               Perfect for early-stage entrepreneurs with limited budgets who need essential guidance to get started right.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <div className="text-3xl font-bold text-primary">Starting at £500</div>
+              <div className="text-3xl font-bold text-primary">From £750</div>
               <Button size="lg" onClick={handleConsultation} className="bg-primary text-white hover:bg-secondary">
                 Get Your Free Consultation
               </Button>
