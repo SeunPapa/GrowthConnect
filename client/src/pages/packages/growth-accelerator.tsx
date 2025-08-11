@@ -32,7 +32,7 @@ export default function GrowthAccelerator() {
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/5 to-accent/5 py-20">
+      <section className="bg-gradient-to-br from-primary/5 to-accent/5 pt-20 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <Badge className="bg-primary text-white mb-4">Most Popular</Badge>
