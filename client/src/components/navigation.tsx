@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { TrendingUp, Menu, X } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
+    setMobileMenuOpen(false);
+  };
+
+  const handleGetStarted = () => {
+    setLocation("/get-started");
     setMobileMenuOpen(false);
   };
 
@@ -44,7 +51,7 @@ export default function Navigation() {
                 About
               </button>
               <button 
-                onClick={() => scrollToSection("contact")}
+                onClick={handleGetStarted}
                 className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
               >
                 Get Started
@@ -84,7 +91,7 @@ export default function Navigation() {
                 About
               </button>
               <button 
-                onClick={() => scrollToSection("contact")}
+                onClick={handleGetStarted}
                 className="block w-full text-left px-3 py-2 text-base font-medium bg-primary text-white rounded-lg hover:bg-secondary transition-colors"
               >
                 Get Started

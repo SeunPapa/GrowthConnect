@@ -8,11 +8,13 @@ import NotFound from "@/pages/not-found";
 import StartupSolutions from "@/pages/packages/startup-solutions";
 import GrowthAccelerator from "@/pages/packages/growth-accelerator";
 import OngoingSupport from "@/pages/packages/ongoing-support";
+import GetStarted from "@/pages/get-started";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/get-started" component={GetStarted} />
       <Route path="/packages/startup-solutions" component={StartupSolutions} />
       <Route path="/packages/growth-accelerator" component={GrowthAccelerator} />
       <Route path="/packages/ongoing-support" component={OngoingSupport} />

@@ -3,17 +3,24 @@ import HeroSection from "@/components/hero-section";
 import ServicePackages from "@/components/service-packages";
 import ContactSection from "@/components/contact-section";
 import { CheckCircle, Rocket, Lightbulb, Star } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Home() {
+  const [, setLocation] = useLocation();
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const navigateToGetStarted = () => {
+    setLocation("/get-started");
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      <HeroSection onViewPackages={() => scrollToSection("packages")} onFreeConsultation={() => scrollToSection("contact")} />
+      <HeroSection onViewPackages={() => scrollToSection("packages")} onFreeConsultation={navigateToGetStarted} />
       
       {/* Introduction Section */}
       <section className="py-20 bg-white">
