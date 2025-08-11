@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import heroBackground from "/src/assets/hero-background.svg";
 
 interface HeroSectionProps {
   onViewPackages: () => void;
@@ -6,8 +7,19 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onViewPackages }: HeroSectionProps) {
   return (
-    <section id="home" className="bg-gradient-to-br from-primary/5 to-secondary/10 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      id="home" 
+      className="relative py-20 bg-gradient-to-br from-primary/5 to-secondary/10"
+      style={{
+        backgroundImage: `url(${heroBackground})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-white/30"></div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-6">
             Startup & Growth Solutions<br />
