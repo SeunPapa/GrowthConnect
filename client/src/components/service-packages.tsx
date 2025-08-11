@@ -124,7 +124,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 </div>
                 <h3 className="text-2xl font-bold text-neutral-900 mb-2">Launch & Growth Accelerator</h3>
                 <p className="text-neutral-500 mb-4">Complete scaling solution</p>
-                <div className="text-3xl font-bold text-primary">£1,500 - £5,000+</div>
+                <div className="text-3xl font-bold text-primary">From £2000</div>
               </div>
               
               <div className="mb-6">
