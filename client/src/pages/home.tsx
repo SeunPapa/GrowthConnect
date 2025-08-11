@@ -38,38 +38,6 @@ export default function Home() {
 
       <ServicePackages />
 
-      {/* Add-on Modules */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
-              Optional Advanced Modules
-            </h2>
-            <p className="text-lg text-neutral-500">
-              Enhance any package with specialized add-on services
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: "🔍", title: "Custom Marketing Plan", description: "SEO, ads, and campaigns" },
-              { icon: "📈", title: "Financial Setup", description: "Budgeting & cash flow tracking" },
-              { icon: "👥", title: "Hiring & Team Building", description: "Recruit and manage your team" },
-              { icon: "⚖️", title: "Compliance & Risk Management", description: "Legal protection and risk assessment" },
-              { icon: "🧠", title: "Ongoing Mentorship", description: "Monthly strategy sessions" }
-            ].map((module, index) => (
-              <div key={index} className="bg-neutral-50 rounded-lg p-6 hover:bg-neutral-100 transition-colors">
-                <div className="flex items-center mb-3">
-                  <span className="text-2xl mr-3">{module.icon}</span>
-                  <h3 className="font-semibold text-neutral-900">{module.title}</h3>
-                </div>
-                <p className="text-neutral-500 text-sm">{module.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Why Choose Us */}
       <section id="about" className="py-20 bg-gradient-to-br from-primary/5 to-secondary/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
