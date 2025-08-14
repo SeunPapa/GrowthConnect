@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Users, MessageSquare, TrendingUp, DollarSign, Calendar, Edit, Trash2, Plus } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, DollarSign, Calendar, Edit, Trash2, Plus, Mail } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { ContactSubmission, Client } from "@shared/schema";
@@ -110,6 +110,21 @@ export default function AdminDashboard() {
     },
   });
 
+  // Test email mutation
+  const testEmailMutation = useMutation({
+    mutationFn: () => apiRequest("/api/test-email", "POST"),
+    onSuccess: (data) => {
+      toast({ 
+        title: data.success ? "Test email sent!" : "Email test failed", 
+        description: data.message,
+        variant: data.success ? "default" : "destructive"
+      });
+    },
+    onError: () => {
+      toast({ title: "Email test failed", variant: "destructive" });
+    },
+  });
+
   const onSubmit = (data: ClientFormData) => {
     if (selectedClient) {
       updateClientMutation.mutate({ id: selectedClient.id, data });
@@ -152,9 +167,20 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage your business consultations and clients</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600 mt-2">Manage your business consultations and clients</p>
+          </div>
+          <Button 
+            onClick={() => testEmailMutation.mutate()}
+            disabled={testEmailMutation.isPending}
+            variant="outline"
+            className="flex items-center space-x-2"
+          >
+            <Mail className="h-4 w-4" />
+            <span>{testEmailMutation.isPending ? "Testing..." : "Test Email"}</span>
+          </Button>
         </div>
 
         {/* Stats Cards */}
