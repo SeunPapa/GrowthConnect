@@ -481,10 +481,11 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="submissions" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="submissions">New Submissions</TabsTrigger>
-            <TabsTrigger value="prospects">Prospects</TabsTrigger>
-            <TabsTrigger value="clients">Active Clients</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="submissions">New Submissions ({submissions.length})</TabsTrigger>
+            <TabsTrigger value="prospects">Prospects ({prospects.length})</TabsTrigger>
+            <TabsTrigger value="clients">Active Clients ({clients.length})</TabsTrigger>
+            <TabsTrigger value="todo">To-Do List</TabsTrigger>
           </TabsList>
 
           <TabsContent value="submissions" className="space-y-6">
@@ -780,6 +781,323 @@ export default function AdminDashboard() {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="todo" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Action Items & Next Steps</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Overdue Follow-ups */}
+                  {(() => {
+                    const overdueProspects = prospects.filter(p => 
+                      p.nextFollowUpDate && new Date(p.nextFollowUpDate) < new Date()
+                    );
+                    
+                    return overdueProspects.length > 0 ? (
+                      <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <h3 className="text-lg font-semibold text-red-800 mb-3 flex items-center">
+                          <AlertTriangle className="h-5 w-5 mr-2" />
+                          Overdue Follow-ups ({overdueProspects.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {overdueProspects.map(prospect => {
+                            const daysOverdue = Math.ceil((new Date().getTime() - new Date(prospect.nextFollowUpDate!).getTime()) / (1000 * 60 * 60 * 24));
+                            return (
+                              <div key={prospect.id} className="bg-white p-3 rounded border flex justify-between items-center">
+                                <div>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedProspectDetail(prospect);
+                                      setIsProspectDetailOpen(true);
+                                    }}
+                                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  >
+                                    {prospect.name}
+                                  </button>
+                                  <p className="text-sm text-gray-600">
+                                    {prospect.company} • <span className="text-red-600 font-medium">{daysOverdue} days overdue</span>
+                                  </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Badge variant="destructive" className="text-xs">
+                                    {prospect.priority}
+                                  </Badge>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      interactionForm.reset({ 
+                                        prospectId: prospect.id,
+                                        type: "call",
+                                        content: ""
+                                      });
+                                      setIsInteractionDialogOpen(true);
+                                    }}
+                                  >
+                                    Follow Up
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Today's Follow-ups */}
+                  {(() => {
+                    const todayProspects = prospects.filter(p => {
+                      if (!p.nextFollowUpDate) return false;
+                      const followUpDate = new Date(p.nextFollowUpDate);
+                      const today = new Date();
+                      return followUpDate.toDateString() === today.toDateString();
+                    });
+                    
+                    return todayProspects.length > 0 ? (
+                      <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                        <h3 className="text-lg font-semibold text-orange-800 mb-3 flex items-center">
+                          <Calendar className="h-5 w-5 mr-2" />
+                          Due Today ({todayProspects.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {todayProspects.map(prospect => (
+                            <div key={prospect.id} className="bg-white p-3 rounded border flex justify-between items-center">
+                              <div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedProspectDetail(prospect);
+                                    setIsProspectDetailOpen(true);
+                                  }}
+                                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                  {prospect.name}
+                                </button>
+                                <p className="text-sm text-gray-600">
+                                  {prospect.company} • Status: {prospect.status.replace('_', ' ')}
+                                </p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <span className={`text-xs font-medium ${getPriorityColor(prospect.priority)}`}>
+                                  {prospect.priority.toUpperCase()}
+                                </span>
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    interactionForm.reset({ 
+                                      prospectId: prospect.id,
+                                      type: "call",
+                                      content: ""
+                                    });
+                                    setIsInteractionDialogOpen(true);
+                                  }}
+                                >
+                                  Contact
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Upcoming Follow-ups (Next 7 days) */}
+                  {(() => {
+                    const upcomingProspects = prospects.filter(p => {
+                      if (!p.nextFollowUpDate) return false;
+                      const followUpDate = new Date(p.nextFollowUpDate);
+                      const today = new Date();
+                      const nextWeek = new Date();
+                      nextWeek.setDate(today.getDate() + 7);
+                      return followUpDate > today && followUpDate <= nextWeek;
+                    });
+                    
+                    return upcomingProspects.length > 0 ? (
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center">
+                          <Clock className="h-5 w-5 mr-2" />
+                          Upcoming This Week ({upcomingProspects.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {upcomingProspects.map(prospect => {
+                            const daysUntil = Math.ceil((new Date(prospect.nextFollowUpDate!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                            return (
+                              <div key={prospect.id} className="bg-white p-3 rounded border flex justify-between items-center">
+                                <div>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedProspectDetail(prospect);
+                                      setIsProspectDetailOpen(true);
+                                    }}
+                                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  >
+                                    {prospect.name}
+                                  </button>
+                                  <p className="text-sm text-gray-600">
+                                    {prospect.company} • Due in {daysUntil} day{daysUntil !== 1 ? 's' : ''}
+                                  </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <span className={`text-xs font-medium ${getPriorityColor(prospect.priority)}`}>
+                                    {prospect.priority.toUpperCase()}
+                                  </span>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setSelectedProspect(prospect);
+                                      prospectForm.reset({
+                                        ...prospect,
+                                        nextFollowUpDate: prospect.nextFollowUpDate ? 
+                                          new Date(prospect.nextFollowUpDate).toISOString().split('T')[0] : ""
+                                      });
+                                      setIsProspectDialogOpen(true);
+                                    }}
+                                  >
+                                    Update
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Pending Next Actions from Interactions */}
+                  {(() => {
+                    const actionsNeeded = interactions.filter(i => 
+                      i.nextAction && i.nextAction.trim() && 
+                      (!i.nextActionDate || new Date(i.nextActionDate) <= new Date())
+                    );
+                    
+                    return actionsNeeded.length > 0 ? (
+                      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                        <h3 className="text-lg font-semibold text-purple-800 mb-3 flex items-center">
+                          <Target className="h-5 w-5 mr-2" />
+                          Pending Actions ({actionsNeeded.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {actionsNeeded.map(interaction => {
+                            const prospect = prospects.find(p => p.id === interaction.prospectId);
+                            return prospect ? (
+                              <div key={interaction.id} className="bg-white p-3 rounded border flex justify-between items-center">
+                                <div>
+                                  <button
+                                    onClick={() => {
+                                      setSelectedProspectDetail(prospect);
+                                      setIsProspectDetailOpen(true);
+                                    }}
+                                    className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                  >
+                                    {prospect.name}
+                                  </button>
+                                  <p className="text-sm text-gray-900 font-medium mt-1">{interaction.nextAction}</p>
+                                  <p className="text-xs text-gray-500">
+                                    From {interaction.type} on {new Date(interaction.createdAt).toLocaleDateString('en-GB')}
+                                    {interaction.nextActionDate && (
+                                      <span> • Target: {new Date(interaction.nextActionDate).toLocaleDateString('en-GB')}</span>
+                                    )}
+                                  </p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => {
+                                      interactionForm.reset({ 
+                                        prospectId: prospect.id,
+                                        type: "note",
+                                        content: `Completed: ${interaction.nextAction}`
+                                      });
+                                      setIsInteractionDialogOpen(true);
+                                    }}
+                                  >
+                                    Complete
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* New Submissions Needing Attention */}
+                  {(() => {
+                    const newSubmissions = submissions.filter((s: ContactSubmission) => 
+                      !isAlreadyClient(s.email) && !isAlreadyProspect(s.email)
+                    );
+                    
+                    return newSubmissions.length > 0 ? (
+                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center">
+                          <UserPlus className="h-5 w-5 mr-2" />
+                          New Submissions ({newSubmissions.length})
+                        </h3>
+                        <div className="space-y-2">
+                          {newSubmissions.slice(0, 5).map((submission: ContactSubmission) => (
+                            <div key={submission.id} className="bg-white p-3 rounded border flex justify-between items-center">
+                              <div>
+                                <button
+                                  onClick={() => {
+                                    setSelectedSubmission(submission);
+                                    setIsSubmissionDetailOpen(true);
+                                  }}
+                                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                                >
+                                  {submission.name}
+                                </button>
+                                <p className="text-sm text-gray-600">
+                                  {submission.email} • {new Date(submission.createdAt).toLocaleDateString('en-GB')}
+                                </p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => convertToProspectMutation.mutate(submission)}
+                                  disabled={convertToProspectMutation.isPending}
+                                >
+                                  Add to Pipeline
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                          {newSubmissions.length > 5 && (
+                            <p className="text-sm text-gray-500 text-center pt-2">
+                              +{newSubmissions.length - 5} more submissions in New Submissions tab
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Empty State */}
+                  {(() => {
+                    const hasAnyTodos = 
+                      prospects.some(p => p.nextFollowUpDate && new Date(p.nextFollowUpDate) < new Date()) ||
+                      prospects.some(p => p.nextFollowUpDate && new Date(p.nextFollowUpDate).toDateString() === new Date().toDateString()) ||
+                      prospects.some(p => p.nextFollowUpDate && new Date(p.nextFollowUpDate) > new Date() && new Date(p.nextFollowUpDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) ||
+                      interactions.some(i => i.nextAction && i.nextAction.trim() && (!i.nextActionDate || new Date(i.nextActionDate) <= new Date())) ||
+                      submissions.some((s: ContactSubmission) => !isAlreadyClient(s.email) && !isAlreadyProspect(s.email));
+                    
+                    return !hasAnyTodos ? (
+                      <div className="text-center py-12 text-gray-500">
+                        <CheckCircle2 className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                        <h3 className="text-lg font-medium mb-2">All caught up!</h3>
+                        <p>No pending actions, overdue follow-ups, or new submissions at the moment.</p>
+                        <p className="text-sm mt-2">Great work staying on top of your pipeline!</p>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
