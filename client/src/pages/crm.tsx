@@ -271,16 +271,12 @@ export default function CRMDashboard() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Week's Interactions</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Qualified Prospects</CardTitle>
+              <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {interactions.filter(i => {
-                  const weekAgo = new Date();
-                  weekAgo.setDate(weekAgo.getDate() - 7);
-                  return new Date(i.createdAt) > weekAgo;
-                }).length}
+                {prospects.filter(p => p.status === "qualified").length}
               </div>
             </CardContent>
           </Card>
@@ -291,7 +287,6 @@ export default function CRMDashboard() {
           <TabsList>
             <TabsTrigger value="submissions">New Submissions</TabsTrigger>
             <TabsTrigger value="prospects">Prospects</TabsTrigger>
-            <TabsTrigger value="interactions">All Interactions</TabsTrigger>
           </TabsList>
 
           <TabsContent value="submissions" className="space-y-6">
@@ -429,73 +424,7 @@ export default function CRMDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="interactions" className="space-y-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Recent Interactions</CardTitle>
-                <Button onClick={() => openInteractionDialog()}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Log Interaction
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Prospect</TableHead>
-                      <TableHead>Subject</TableHead>
-                      <TableHead>Outcome</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Next Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {interactions.map((interaction) => {
-                      const prospect = prospects.find(p => p.id === interaction.prospectId);
-                      return (
-                        <TableRow key={interaction.id}>
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getInteractionIcon(interaction.type)}
-                              <span className="capitalize">{interaction.type}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>{prospect?.name || "Unknown"}</TableCell>
-                          <TableCell>{interaction.subject || "-"}</TableCell>
-                          <TableCell>
-                            {interaction.outcome ? (
-                              <Badge 
-                                variant={interaction.outcome === "positive" ? "default" : 
-                                        interaction.outcome === "negative" ? "destructive" : "outline"}
-                              >
-                                {interaction.outcome}
-                              </Badge>
-                            ) : "-"}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(interaction.createdAt).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            {interaction.nextAction ? (
-                              <div className="text-sm">
-                                <div>{interaction.nextAction}</div>
-                                {interaction.nextActionDate && (
-                                  <div className="text-gray-500">
-                                    {new Date(interaction.nextActionDate).toLocaleDateString()}
-                                  </div>
-                                )}
-                              </div>
-                            ) : "-"}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+
         </Tabs>
 
         {/* Prospect Dialog */}
