@@ -14,10 +14,26 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Users, MessageSquare, TrendingUp, DollarSign, Calendar, Edit, Trash2, Plus, Mail, UserPlus } from "lucide-react";
+import { 
+  Users, 
+  MessageSquare, 
+  TrendingUp, 
+  DollarSign, 
+  Calendar, 
+  Edit, 
+  Trash2, 
+  Plus, 
+  Mail, 
+  UserPlus,
+  Phone,
+  CheckCircle2,
+  AlertTriangle,
+  FileText,
+  Target
+} from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { ContactSubmission, Client } from "@shared/schema";
+import type { ContactSubmission, Client, Prospect, Interaction } from "@shared/schema";
 
 const clientSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -30,13 +46,39 @@ const clientSchema = z.object({
   notes: z.string().optional(),
 });
 
+const prospectSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  company: z.string().optional(),
+  status: z.enum(["new", "contacted", "qualified", "meeting_scheduled", "proposal_sent", "converted", "rejected"]).default("new"),
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  nextFollowUpDate: z.string().optional(),
+  assignedTo: z.string().optional(),
+  notes: z.string().optional(),
+});
+
+const interactionSchema = z.object({
+  prospectId: z.string().min(1, "Prospect is required"),
+  type: z.enum(["call", "email", "meeting", "note"]),
+  subject: z.string().optional(),
+  content: z.string().min(1, "Content is required"),
+  outcome: z.enum(["positive", "negative", "neutral", "follow_up_needed"]).optional(),
+  nextAction: z.string().optional(),
+  nextActionDate: z.string().optional(),
+});
+
 type ClientFormData = z.infer<typeof clientSchema>;
+type ProspectFormData = z.infer<typeof prospectSchema>;
+type InteractionFormData = z.infer<typeof interactionSchema>;
 
 export default function AdminDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isProspectDialogOpen, setIsProspectDialogOpen] = useState(false);
+  const [isInteractionDialogOpen, setIsInteractionDialogOpen] = useState(false);
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -51,6 +93,27 @@ export default function AdminDashboard() {
     },
   });
 
+  const prospectForm = useForm<ProspectFormData>({
+    resolver: zodResolver(prospectSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      company: "",
+      status: "new",
+      priority: "medium",
+      notes: "",
+    },
+  });
+
+  const interactionForm = useForm<InteractionFormData>({
+    resolver: zodResolver(interactionSchema),
+    defaultValues: {
+      prospectId: "",
+      type: "call",
+      content: "",
+    },
+  });
+
   // Fetch submissions
   const { data: submissions = [], isLoading: submissionsLoading } = useQuery({
     queryKey: ["/api/contact-submissions"],
@@ -59,6 +122,16 @@ export default function AdminDashboard() {
   // Fetch clients
   const { data: clients = [], isLoading: clientsLoading } = useQuery({
     queryKey: ["/api/clients"],
+  });
+
+  // Fetch prospects
+  const { data: prospects = [] } = useQuery<Prospect[]>({
+    queryKey: ["/api/prospects"],
+  });
+
+  // Fetch interactions
+  const { data: interactions = [] } = useQuery<Interaction[]>({
+    queryKey: ["/api/interactions"],
   });
 
   // Create client mutation
@@ -160,9 +233,113 @@ export default function AdminDashboard() {
     }
   };
 
+  // Convert submission to prospect
+  const convertToProspectMutation = useMutation({
+    mutationFn: (submission: ContactSubmission) =>
+      apiRequest("POST", "/api/prospects", {
+        submissionId: submission.id,
+        name: submission.name,
+        email: submission.email,
+        company: "",
+        status: "new",
+        priority: "medium",
+        source: "consultation_form",
+        notes: `Original inquiry: ${submission.message.substring(0, 200)}...`
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/prospects"] });
+      toast({ title: "Prospect created successfully!" });
+    },
+    onError: () => {
+      toast({ title: "Failed to create prospect", variant: "destructive" });
+    },
+  });
+
+  // Create/update prospect
+  const prospectMutation = useMutation({
+    mutationFn: (data: ProspectFormData) => {
+      if (selectedProspect) {
+        return apiRequest("PUT", `/api/prospects/${selectedProspect.id}`, data);
+      } else {
+        return apiRequest("POST", "/api/prospects", data);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/prospects"] });
+      setIsProspectDialogOpen(false);
+      setSelectedProspect(null);
+      prospectForm.reset();
+      toast({ title: selectedProspect ? "Prospect updated!" : "Prospect created!" });
+    },
+    onError: () => {
+      toast({ title: "Operation failed", variant: "destructive" });
+    },
+  });
+
+  // Add interaction
+  const interactionMutation = useMutation({
+    mutationFn: (data: InteractionFormData) =>
+      apiRequest("POST", "/api/interactions", {
+        ...data,
+        nextActionDate: data.nextActionDate ? new Date(data.nextActionDate).toISOString() : null
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/interactions"] });
+      setIsInteractionDialogOpen(false);
+      interactionForm.reset();
+      toast({ title: "Interaction logged successfully!" });
+    },
+    onError: () => {
+      toast({ title: "Failed to log interaction", variant: "destructive" });
+    },
+  });
+
   // Check if a submission has already been converted to a client
   const isAlreadyClient = (submissionEmail: string) => {
     return clients.some((client: Client) => client.email === submissionEmail);
+  };
+
+  // Check if submission is already a prospect
+  const isAlreadyProspect = (email: string) => {
+    return prospects.some(prospect => prospect.email === email);
+  };
+
+  // Get interactions for a specific prospect
+  const getProspectInteractions = (prospectId: string) => {
+    return interactions.filter(interaction => interaction.prospectId === prospectId);
+  };
+
+  // Helper functions
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case "new": return "secondary";
+      case "contacted": return "outline";
+      case "qualified": return "default";
+      case "meeting_scheduled": return "default";
+      case "proposal_sent": return "default";
+      case "converted": return "default";
+      case "rejected": return "destructive";
+      default: return "secondary";
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high": return "text-red-600";
+      case "medium": return "text-yellow-600";
+      case "low": return "text-green-600";
+      default: return "text-gray-600";
+    }
+  };
+
+  const getInteractionIcon = (type: string) => {
+    switch (type) {
+      case "call": return <Phone className="h-4 w-4" />;
+      case "email": return <Mail className="h-4 w-4" />;
+      case "meeting": return <Calendar className="h-4 w-4" />;
+      case "note": return <FileText className="h-4 w-4" />;
+      default: return <MessageSquare className="h-4 w-4" />;
+    }
   };
 
   const onSubmit = (data: ClientFormData) => {
@@ -210,31 +387,50 @@ export default function AdminDashboard() {
         <div className="mb-8 flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-2">Manage your business consultations and clients</p>
+            <p className="text-gray-600 mt-2">Manage your business consultations, prospects, and clients</p>
           </div>
-          <div className="flex space-x-2">
-            <Button 
-              onClick={() => window.location.href = '/crm'}
-              variant="default"
-              className="flex items-center space-x-2"
-            >
-              <Users className="h-4 w-4" />
-              <span>Open CRM</span>
-            </Button>
-            <Button 
-              onClick={() => testEmailMutation.mutate()}
-              disabled={testEmailMutation.isPending}
-              variant="outline"
-              className="flex items-center space-x-2"
-            >
-              <Mail className="h-4 w-4" />
-              <span>{testEmailMutation.isPending ? "Testing..." : "Test Email"}</span>
-            </Button>
-          </div>
+          <Button 
+            onClick={() => testEmailMutation.mutate()}
+            disabled={testEmailMutation.isPending}
+            variant="outline"
+            className="flex items-center space-x-2"
+          >
+            <Mail className="h-4 w-4" />
+            <span>{testEmailMutation.isPending ? "Testing..." : "Test Email"}</span>
+          </Button>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">New Submissions</CardTitle>
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{submissions.filter(s => !isAlreadyProspect(s.email) && !isAlreadyClient(s.email)).length}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Prospects</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{prospects.filter(p => !["converted", "rejected"].includes(p.status)).length}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">High Priority</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{prospects.filter(p => p.priority === "high").length}</div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
@@ -279,7 +475,8 @@ export default function AdminDashboard() {
         {/* Main Content */}
         <Tabs defaultValue="submissions" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="submissions">Consultation Submissions</TabsTrigger>
+            <TabsTrigger value="submissions">New Submissions</TabsTrigger>
+            <TabsTrigger value="prospects">Prospects</TabsTrigger>
             <TabsTrigger value="clients">Active Clients</TabsTrigger>
           </TabsList>
 
@@ -341,29 +538,141 @@ export default function AdminDashboard() {
                             {submission.message}
                           </TableCell>
                           <TableCell>
-                            {isAlreadyClient(submission.email) ? (
-                              <Badge variant="secondary" className="flex items-center space-x-1 w-fit">
-                                <Users className="h-3 w-3" />
-                                <span>Already Client</span>
-                              </Badge>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => convertToClientMutation.mutate(submission)}
-                                disabled={convertToClientMutation.isPending}
-                                className="flex items-center space-x-1"
-                              >
-                                <UserPlus className="h-4 w-4" />
-                                <span>Convert to Client</span>
-                              </Button>
-                            )}
+                            <div className="flex space-x-2">
+                              {isAlreadyClient(submission.email) ? (
+                                <Badge variant="secondary" className="flex items-center space-x-1 w-fit">
+                                  <Users className="h-3 w-3" />
+                                  <span>Client</span>
+                                </Badge>
+                              ) : isAlreadyProspect(submission.email) ? (
+                                <Badge variant="outline" className="flex items-center space-x-1 w-fit">
+                                  <CheckCircle2 className="h-3 w-3" />
+                                  <span>In Pipeline</span>
+                                </Badge>
+                              ) : (
+                                <div className="flex space-x-1">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => convertToProspectMutation.mutate(submission)}
+                                    disabled={convertToProspectMutation.isPending}
+                                  >
+                                    <UserPlus className="h-4 w-4 mr-1" />
+                                    Pipeline
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => convertToClientMutation.mutate(submission)}
+                                    disabled={convertToClientMutation.isPending}
+                                  >
+                                    <UserPlus className="h-4 w-4 mr-1" />
+                                    Client
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="prospects" className="space-y-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Prospect Pipeline</CardTitle>
+                <Button onClick={() => {
+                  setSelectedProspect(null);
+                  prospectForm.reset();
+                  setIsProspectDialogOpen(true);
+                }}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Prospect
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Next Follow-up</TableHead>
+                      <TableHead>Interactions</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {prospects.map((prospect) => {
+                      const prospectInteractions = getProspectInteractions(prospect.id);
+                      return (
+                        <TableRow key={prospect.id}>
+                          <TableCell className="font-medium">{prospect.name}</TableCell>
+                          <TableCell>{prospect.company || "-"}</TableCell>
+                          <TableCell>
+                            <Badge variant={getStatusBadgeVariant(prospect.status)}>
+                              {prospect.status.replace('_', ' ')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <span className={getPriorityColor(prospect.priority)}>
+                              {prospect.priority}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            {prospect.nextFollowUpDate ? (
+                              new Date(prospect.nextFollowUpDate).toLocaleDateString()
+                            ) : (
+                              <span className="text-gray-500">Not set</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">
+                              {prospectInteractions.length} interactions
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedProspect(prospect);
+                                  prospectForm.reset({
+                                    ...prospect,
+                                    nextFollowUpDate: prospect.nextFollowUpDate ? 
+                                      new Date(prospect.nextFollowUpDate).toISOString().split('T')[0] : ""
+                                  });
+                                  setIsProspectDialogOpen(true);
+                                }}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm"
+                                onClick={() => {
+                                  interactionForm.reset({ 
+                                    prospectId: prospect.id,
+                                    type: "call",
+                                    content: ""
+                                  });
+                                  setIsInteractionDialogOpen(true);
+                                }}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
@@ -595,6 +904,249 @@ export default function AdminDashboard() {
                     disabled={createClientMutation.isPending || updateClientMutation.isPending}
                   >
                     {selectedClient ? "Update" : "Create"} Client
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Prospect Dialog */}
+        <Dialog open={isProspectDialogOpen} onOpenChange={setIsProspectDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>
+                {selectedProspect ? "Edit Prospect" : "Add New Prospect"}
+              </DialogTitle>
+            </DialogHeader>
+            <Form {...prospectForm}>
+              <form onSubmit={prospectForm.handleSubmit((data) => prospectMutation.mutate(data))} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={prospectForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={prospectForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={prospectForm.control}
+                  name="company"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-3 gap-4">
+                  <FormField
+                    control={prospectForm.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="new">New</SelectItem>
+                            <SelectItem value="contacted">Contacted</SelectItem>
+                            <SelectItem value="qualified">Qualified</SelectItem>
+                            <SelectItem value="meeting_scheduled">Meeting Scheduled</SelectItem>
+                            <SelectItem value="proposal_sent">Proposal Sent</SelectItem>
+                            <SelectItem value="converted">Converted</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={prospectForm.control}
+                    name="priority"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Priority</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="low">Low</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="high">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={prospectForm.control}
+                    name="nextFollowUpDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Next Follow-up</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={prospectForm.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notes</FormLabel>
+                      <FormControl>
+                        <Textarea rows={3} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end space-x-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsProspectDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={prospectMutation.isPending}
+                  >
+                    {selectedProspect ? "Update" : "Create"} Prospect
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Interaction Dialog */}
+        <Dialog open={isInteractionDialogOpen} onOpenChange={setIsInteractionDialogOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Log Interaction</DialogTitle>
+            </DialogHeader>
+            <Form {...interactionForm}>
+              <form onSubmit={interactionForm.handleSubmit((data) => interactionMutation.mutate(data))} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={interactionForm.control}
+                    name="prospectId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Prospect</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select prospect" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {prospects.map((prospect) => (
+                              <SelectItem key={prospect.id} value={prospect.id}>
+                                {prospect.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={interactionForm.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="call">Call</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="meeting">Meeting</SelectItem>
+                            <SelectItem value="note">Note</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={interactionForm.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Details</FormLabel>
+                      <FormControl>
+                        <Textarea rows={4} {...field} placeholder="Describe the interaction details..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end space-x-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setIsInteractionDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit"
+                    disabled={interactionMutation.isPending}
+                  >
+                    Log Interaction
                   </Button>
                 </div>
               </form>

@@ -10,7 +10,6 @@ import GrowthAccelerator from "@/pages/packages/growth-accelerator";
 import OngoingSupport from "@/pages/packages/ongoing-support";
 import GetStarted from "@/pages/get-started";
 import AdminDashboard from "@/pages/admin";
-import CRMDashboard from "@/pages/crm";
 
 function Router() {
   return (
@@ -21,7 +20,6 @@ function Router() {
       <Route path="/packages/growth-accelerator" component={GrowthAccelerator} />
       <Route path="/packages/ongoing-support" component={OngoingSupport} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/crm" component={CRMDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
