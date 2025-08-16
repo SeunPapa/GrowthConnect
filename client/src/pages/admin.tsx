@@ -79,11 +79,13 @@ export default function AdminDashboard() {
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
   const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
   const [selectedProspectDetail, setSelectedProspectDetail] = useState<Prospect | null>(null);
+  const [selectedClientDetail, setSelectedClientDetail] = useState<Client | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProspectDialogOpen, setIsProspectDialogOpen] = useState(false);
   const [isInteractionDialogOpen, setIsInteractionDialogOpen] = useState(false);
   const [isSubmissionDetailOpen, setIsSubmissionDetailOpen] = useState(false);
   const [isProspectDetailOpen, setIsProspectDetailOpen] = useState(false);
+  const [isClientDetailOpen, setIsClientDetailOpen] = useState(false);
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -730,7 +732,17 @@ export default function AdminDashboard() {
                     <TableBody>
                       {clients.map((client: Client) => (
                         <TableRow key={client.id}>
-                          <TableCell className="font-medium">{client.name}</TableCell>
+                          <TableCell className="font-medium">
+                            <button
+                              onClick={() => {
+                                setSelectedClientDetail(client);
+                                setIsClientDetailOpen(true);
+                              }}
+                              className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            >
+                              {client.name}
+                            </button>
+                          </TableCell>
                           <TableCell>{client.email}</TableCell>
                           <TableCell>{client.company || "-"}</TableCell>
                           <TableCell>{client.currentPackage || "-"}</TableCell>
@@ -1653,6 +1665,258 @@ export default function AdminDashboard() {
                   <Button 
                     variant="outline" 
                     onClick={() => setIsProspectDetailOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Client Detail Dialog */}
+        <Dialog open={isClientDetailOpen} onOpenChange={setIsClientDetailOpen}>
+          <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Client Profile & Details</DialogTitle>
+            </DialogHeader>
+            {selectedClientDetail && (
+              <div className="space-y-6">
+                {/* Client Information */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Client Information</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Name</Label>
+                      <p className="text-lg font-semibold">{selectedClientDetail.name}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Email</Label>
+                      <p className="text-lg">{selectedClientDetail.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Company</Label>
+                      <p>{selectedClientDetail.company || "Not specified"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Phone</Label>
+                      <p>{selectedClientDetail.phone || "Not provided"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Status</Label>
+                      <Badge 
+                        variant={
+                          selectedClientDetail.status === "active" ? "default" : 
+                          selectedClientDetail.status === "paused" ? "secondary" : "outline"
+                        }
+                      >
+                        {selectedClientDetail.status}
+                      </Badge>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Source</Label>
+                      <p>{selectedClientDetail.source || "Direct"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Package & Financial Information */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Package & Billing</h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Current Package</Label>
+                      <div className="mt-1">
+                        {selectedClientDetail.currentPackage ? (
+                          <Badge variant="secondary" className="text-sm">
+                            {selectedClientDetail.currentPackage === 'startup' && 'Startup Solutions'}
+                            {selectedClientDetail.currentPackage === 'growth' && 'Growth Accelerator'}
+                            {selectedClientDetail.currentPackage === 'ongoing' && 'Ongoing Support'}
+                            {!['startup', 'growth', 'ongoing'].includes(selectedClientDetail.currentPackage) && selectedClientDetail.currentPackage}
+                          </Badge>
+                        ) : (
+                          <span className="text-gray-500">No package assigned</span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Monthly Value</Label>
+                      <p className="text-lg font-semibold text-green-600">
+                        {selectedClientDetail.monthlyValue || "Not set"}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Package Start Date</Label>
+                      <p className="text-sm">
+                        {selectedClientDetail.packageStartDate ? 
+                          new Date(selectedClientDetail.packageStartDate).toLocaleDateString('en-GB', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          }) : "Not specified"
+                        }
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Account Duration</Label>
+                      <p className="text-sm">
+                        {selectedClientDetail.packageStartDate ? (() => {
+                          const startDate = new Date(selectedClientDetail.packageStartDate);
+                          const today = new Date();
+                          const diffTime = Math.abs(today.getTime() - startDate.getTime());
+                          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                          const months = Math.floor(diffDays / 30);
+                          const remainingDays = diffDays % 30;
+                          
+                          if (months > 0) {
+                            return `${months} month${months > 1 ? 's' : ''}, ${remainingDays} days`;
+                          }
+                          return `${diffDays} days`;
+                        })() : "Not calculated"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Original Submission (if linked) */}
+                {selectedClientDetail.submissionId && (() => {
+                  const originalSubmission = submissions.find(s => s.id === selectedClientDetail.submissionId);
+                  return originalSubmission ? (
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-3">Original Consultation Request</h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Submitted</Label>
+                          <p className="text-sm">
+                            {new Date(originalSubmission.createdAt).toLocaleDateString('en-GB', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Package Interest</Label>
+                          <div>
+                            {originalSubmission.package ? (
+                              <Badge variant="secondary" className="text-xs">
+                                {originalSubmission.package === 'startup' && 'Startup Solutions'}
+                                {originalSubmission.package === 'growth' && 'Growth Accelerator'}
+                                {originalSubmission.package === 'ongoing' && 'Ongoing Support'}
+                                {!['startup', 'growth', 'ongoing'].includes(originalSubmission.package) && originalSubmission.package}
+                              </Badge>
+                            ) : (
+                              <span className="text-gray-500 text-xs">No preference</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-500">Original Message</Label>
+                        <div className="mt-1 p-3 bg-white rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                          {originalSubmission.message}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+
+                {/* Client Notes & History */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Notes & Comments</h3>
+                  {selectedClientDetail.notes ? (
+                    <div className="p-3 bg-white rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                      {selectedClientDetail.notes}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <FileText className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <p>No notes recorded yet</p>
+                      <p className="text-sm">Click "Edit Details" to add client notes</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Client Metrics */}
+                <div className="bg-indigo-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Account Metrics</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center p-3 bg-white rounded border">
+                      <div className="text-2xl font-bold text-green-600">
+                        {selectedClientDetail.monthlyValue ? 
+                          selectedClientDetail.monthlyValue.replace(/[^\d.,]/g, '') : '0'}
+                      </div>
+                      <p className="text-sm text-gray-600">Monthly Value</p>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded border">
+                      <div className="text-2xl font-bold text-blue-600">
+                        {selectedClientDetail.packageStartDate ? (() => {
+                          const startDate = new Date(selectedClientDetail.packageStartDate);
+                          const today = new Date();
+                          const months = Math.floor(Math.abs(today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
+                          return months;
+                        })() : 0}
+                      </div>
+                      <p className="text-sm text-gray-600">Months Active</p>
+                    </div>
+                    <div className="text-center p-3 bg-white rounded border">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {selectedClientDetail.monthlyValue && selectedClientDetail.packageStartDate ? (() => {
+                          const monthlyValue = parseFloat(selectedClientDetail.monthlyValue.replace(/[^\d.,]/g, ''));
+                          const startDate = new Date(selectedClientDetail.packageStartDate);
+                          const today = new Date();
+                          const months = Math.floor(Math.abs(today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
+                          return `£${(monthlyValue * Math.max(months, 1)).toLocaleString()}`;
+                        })() : '£0'}
+                      </div>
+                      <p className="text-sm text-gray-600">Total Value</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex justify-between pt-4 border-t">
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedClient(selectedClientDetail);
+                        form.reset({
+                          ...selectedClientDetail,
+                          packageStartDate: selectedClientDetail.packageStartDate ? 
+                            new Date(selectedClientDetail.packageStartDate).toISOString().split('T')[0] : ""
+                        });
+                        setIsDialogOpen(true);
+                        setIsClientDetailOpen(false);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Details
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => window.open(`mailto:${selectedClientDetail.email}`, '_blank')}
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send Email
+                    </Button>
+                    {selectedClientDetail.phone && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => window.open(`tel:${selectedClientDetail.phone}`, '_blank')}
+                      >
+                        <Phone className="h-4 w-4 mr-2" />
+                        Call Client
+                      </Button>
+                    )}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsClientDetailOpen(false)}
                   >
                     Close
                   </Button>
