@@ -11,6 +11,14 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendConsultationNotification(submission: ContactSubmission): Promise<boolean> {
+  console.log('🔄 Attempting to send email notification for:', submission.name);
+  
+  // Check if environment variables are set
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.error('❌ Gmail credentials not found in environment variables');
+    return false;
+  }
+  
   try {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -73,11 +81,20 @@ Next Steps: Review this submission in your admin dashboard and follow up with th
       html: emailHtml,
     };
 
+    console.log('📧 Sending email with options:', {
+      from: process.env.GMAIL_USER,
+      to: 'growthaccelerator03@gmail.com',
+      subject: mailOptions.subject
+    });
+    
     await transporter.sendMail(mailOptions);
     console.log(`✅ Email notification sent for submission from ${submission.name}`);
     return true;
   } catch (error) {
     console.error('❌ Failed to send email notification:', error);
+    console.error('Error type:', (error as any).constructor.name);
+    console.error('Error message:', (error as any).message);
+    if ((error as any).code) console.error('Error code:', (error as any).code);
     return false;
   }
 }

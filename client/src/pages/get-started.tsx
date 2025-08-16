@@ -77,10 +77,11 @@ Additional Info: ${data.additionalInfo || 'None provided'}`,
       });
       setLocation("/#contact");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Form submission error:", error);
       toast({ 
         title: "Submission failed", 
-        description: "Please try again or contact us directly.",
+        description: `Error: ${error.message || 'Please try again or contact us directly.'}`,
         variant: "destructive" 
       });
     },

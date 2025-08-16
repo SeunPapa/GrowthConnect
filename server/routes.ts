@@ -14,7 +14,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Send email notification (don't block response if email fails)
       sendConsultationNotification(result).catch(error => {
-        console.error('Email notification failed:', error);
+        console.error('❌ Email notification failed:', error);
+        console.error('Error details:', error.message);
+        console.error('Stack trace:', error.stack);
       });
       
       res.json({ success: true, id: result.id });
