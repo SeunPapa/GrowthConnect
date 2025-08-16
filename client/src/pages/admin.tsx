@@ -29,7 +29,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileText,
-  Target
+  Target,
+  Clock
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -1469,6 +1470,149 @@ export default function AdminDashboard() {
                       </div>
                     );
                   })()}
+                </div>
+
+                {/* Follow-up & Next Steps */}
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Follow-up & Next Steps</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Scheduled Follow-up</Label>
+                      {selectedProspectDetail.nextFollowUpDate ? (
+                        <div className="mt-1">
+                          <p className="font-medium text-lg">
+                            {new Date(selectedProspectDetail.nextFollowUpDate).toLocaleDateString('en-GB', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {(() => {
+                              const followUpDate = new Date(selectedProspectDetail.nextFollowUpDate);
+                              const today = new Date();
+                              const diffTime = followUpDate.getTime() - today.getTime();
+                              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                              
+                              if (diffDays < 0) return `${Math.abs(diffDays)} days overdue`;
+                              if (diffDays === 0) return 'Due today';
+                              if (diffDays === 1) return 'Due tomorrow';
+                              return `Due in ${diffDays} days`;
+                            })()}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="mt-1 p-3 bg-white rounded border border-dashed border-gray-300">
+                          <p className="text-gray-500 italic text-sm">No follow-up scheduled</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Priority Level</Label>
+                      <div className="mt-1">
+                        <span className={`${getPriorityColor(selectedProspectDetail.priority)} text-lg font-medium`}>
+                          {selectedProspectDetail.priority.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Next Actions from Latest Interaction */}
+                  {(() => {
+                    const prospectInteractions = getProspectInteractions(selectedProspectDetail.id);
+                    const latestInteractionWithAction = prospectInteractions
+                      .filter(i => i.nextAction && i.nextAction.trim())
+                      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+                    
+                    return latestInteractionWithAction ? (
+                      <div>
+                        <Label className="text-sm font-medium text-gray-500">Latest Next Action</Label>
+                        <div className="mt-1 p-3 bg-white rounded border">
+                          <p className="text-sm font-medium text-gray-900">{latestInteractionWithAction.nextAction}</p>
+                          {latestInteractionWithAction.nextActionDate && (
+                            <p className="text-xs text-gray-600 mt-1">
+                              Target date: {new Date(latestInteractionWithAction.nextActionDate).toLocaleDateString('en-GB')}
+                            </p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-1">
+                            From {latestInteractionWithAction.type} on {new Date(latestInteractionWithAction.createdAt).toLocaleDateString('en-GB')}
+                          </p>
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Quick Follow-up Actions */}
+                  <div className="mt-4 pt-4 border-t border-yellow-200">
+                    <Label className="text-sm font-medium text-gray-500 mb-2 block">Quick Actions</Label>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          interactionForm.reset({ 
+                            prospectId: selectedProspectDetail.id,
+                            type: "call",
+                            content: ""
+                          });
+                          setIsInteractionDialogOpen(true);
+                        }}
+                      >
+                        <Phone className="h-4 w-4 mr-1" />
+                        Schedule Call
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          interactionForm.reset({ 
+                            prospectId: selectedProspectDetail.id,
+                            type: "email",
+                            content: ""
+                          });
+                          setIsInteractionDialogOpen(true);
+                        }}
+                      >
+                        <Mail className="h-4 w-4 mr-1" />
+                        Send Email
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          interactionForm.reset({ 
+                            prospectId: selectedProspectDetail.id,
+                            type: "meeting",
+                            content: ""
+                          });
+                          setIsInteractionDialogOpen(true);
+                        }}
+                      >
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Book Meeting
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedProspect(selectedProspectDetail);
+                          prospectForm.reset({
+                            ...selectedProspectDetail,
+                            nextFollowUpDate: selectedProspectDetail.nextFollowUpDate ? 
+                              new Date(selectedProspectDetail.nextFollowUpDate).toISOString().split('T')[0] : ""
+                          });
+                          setIsProspectDialogOpen(true);
+                          setIsProspectDetailOpen(false);
+                        }}
+                      >
+                        <Clock className="h-4 w-4 mr-1" />
+                        Update Follow-up
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Quick Actions */}
