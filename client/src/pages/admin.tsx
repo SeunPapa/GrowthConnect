@@ -76,9 +76,11 @@ export default function AdminDashboard() {
   const queryClient = useQueryClient();
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProspectDialogOpen, setIsProspectDialogOpen] = useState(false);
   const [isInteractionDialogOpen, setIsInteractionDialogOpen] = useState(false);
+  const [isSubmissionDetailOpen, setIsSubmissionDetailOpen] = useState(false);
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -522,7 +524,17 @@ export default function AdminDashboard() {
                     <TableBody>
                       {submissions.map((submission: ContactSubmission) => (
                         <TableRow key={submission.id}>
-                          <TableCell className="font-medium">{submission.name}</TableCell>
+                          <TableCell className="font-medium">
+                            <button
+                              onClick={() => {
+                                setSelectedSubmission(submission);
+                                setIsSubmissionDetailOpen(true);
+                              }}
+                              className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            >
+                              {submission.name}
+                            </button>
+                          </TableCell>
                           <TableCell>{submission.email}</TableCell>
                           <TableCell>
                             {submission.package ? (
@@ -1151,6 +1163,116 @@ export default function AdminDashboard() {
                 </div>
               </form>
             </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Submission Detail Dialog */}
+        <Dialog open={isSubmissionDetailOpen} onOpenChange={setIsSubmissionDetailOpen}>
+          <DialogContent className="sm:max-w-[600px]">
+            <DialogHeader>
+              <DialogTitle>Consultation Submission Details</DialogTitle>
+            </DialogHeader>
+            {selectedSubmission && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-500">Name</Label>
+                    <p className="text-lg font-semibold">{selectedSubmission.name}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-500">Email</Label>
+                    <p className="text-lg">{selectedSubmission.email}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Package Interest</Label>
+                  <div className="mt-1">
+                    {selectedSubmission.package ? (
+                      <Badge variant="secondary" className="text-sm">
+                        {selectedSubmission.package === 'startup' && 'Startup Solutions'}
+                        {selectedSubmission.package === 'growth' && 'Growth Accelerator'}
+                        {selectedSubmission.package === 'ongoing' && 'Ongoing Support'}
+                        {!['startup', 'growth', 'ongoing'].includes(selectedSubmission.package) && selectedSubmission.package}
+                      </Badge>
+                    ) : (
+                      <p className="text-gray-500 italic">No specific package preference</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Submission Date</Label>
+                  <p className="text-sm text-gray-700">
+                    {new Date(selectedSubmission.createdAt).toLocaleDateString('en-GB', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Message</Label>
+                  <div className="mt-2 p-4 bg-gray-50 rounded-lg border">
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {selectedSubmission.message}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between pt-4 border-t">
+                  <div className="flex space-x-2">
+                    {isAlreadyClient(selectedSubmission.email) ? (
+                      <Badge variant="secondary" className="flex items-center space-x-1">
+                        <Users className="h-3 w-3" />
+                        <span>Already a Client</span>
+                      </Badge>
+                    ) : isAlreadyProspect(selectedSubmission.email) ? (
+                      <Badge variant="outline" className="flex items-center space-x-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        <span>In Prospect Pipeline</span>
+                      </Badge>
+                    ) : (
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            convertToProspectMutation.mutate(selectedSubmission);
+                            setIsSubmissionDetailOpen(false);
+                          }}
+                          disabled={convertToProspectMutation.isPending}
+                        >
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Add to Pipeline
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            convertToClientMutation.mutate(selectedSubmission);
+                            setIsSubmissionDetailOpen(false);
+                          }}
+                          disabled={convertToClientMutation.isPending}
+                        >
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Convert to Client
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsSubmissionDetailOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
