@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Users, MessageSquare, TrendingUp, DollarSign, Calendar, Edit, Trash2, Plus, Mail } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, DollarSign, Calendar, Edit, Trash2, Plus, Mail, UserPlus } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { ContactSubmission, Client } from "@shared/schema";
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
 
   // Test email mutation
   const testEmailMutation = useMutation({
-    mutationFn: () => apiRequest("/api/test-email", "POST"),
+    mutationFn: () => apiRequest("POST", "/api/test-email", {}),
     onSuccess: (data) => {
       toast({ 
         title: data.success ? "Test email sent!" : "Email test failed", 
@@ -124,6 +124,46 @@ export default function AdminDashboard() {
       toast({ title: "Email test failed", variant: "destructive" });
     },
   });
+
+  // Convert submission to client mutation
+  const convertToClientMutation = useMutation({
+    mutationFn: (submission: ContactSubmission) =>
+      apiRequest("POST", "/api/clients", {
+        name: submission.name,
+        email: submission.email,
+        company: "",
+        currentPackage: submission.package || "startup",
+        packageStartDate: new Date().toISOString(),
+        monthlyValue: getDefaultPriceForPackage(submission.package || "startup"),
+        status: "active",
+        notes: `Converted from consultation submission on ${new Date().toLocaleDateString()}. Original message: ${submission.message.substring(0, 200)}...`
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contact-submissions"] });
+      toast({ 
+        title: "Client created successfully!", 
+        description: "Consultation submission converted to active client."
+      });
+    },
+    onError: () => {
+      toast({ title: "Failed to create client", variant: "destructive" });
+    },
+  });
+
+  const getDefaultPriceForPackage = (packageType: string) => {
+    switch (packageType) {
+      case "startup": return "£750";
+      case "growth": return "£2,000";
+      case "ongoing": return "£1,500";
+      default: return "£750";
+    }
+  };
+
+  // Check if a submission has already been converted to a client
+  const isAlreadyClient = (submissionEmail: string) => {
+    return clients.some((client: Client) => client.email === submissionEmail);
+  };
 
   const onSubmit = (data: ClientFormData) => {
     if (selectedClient) {
@@ -235,8 +275,27 @@ export default function AdminDashboard() {
 
           <TabsContent value="submissions" className="space-y-6">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Recent Consultation Submissions</CardTitle>
+                <div className="flex space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const unconvertedSubmissions = submissions.filter(
+                        (s: ContactSubmission) => !isAlreadyClient(s.email)
+                      );
+                      unconvertedSubmissions.forEach((submission: ContactSubmission) => {
+                        convertToClientMutation.mutate(submission);
+                      });
+                    }}
+                    disabled={convertToClientMutation.isPending || submissions.filter((s: ContactSubmission) => !isAlreadyClient(s.email)).length === 0}
+                    className="flex items-center space-x-1"
+                  >
+                    <Users className="h-4 w-4" />
+                    <span>Convert All New</span>
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {submissionsLoading ? (
@@ -250,6 +309,7 @@ export default function AdminDashboard() {
                         <TableHead>Package Interest</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Message</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -269,6 +329,25 @@ export default function AdminDashboard() {
                           </TableCell>
                           <TableCell className="max-w-xs truncate">
                             {submission.message}
+                          </TableCell>
+                          <TableCell>
+                            {isAlreadyClient(submission.email) ? (
+                              <Badge variant="secondary" className="flex items-center space-x-1 w-fit">
+                                <Users className="h-3 w-3" />
+                                <span>Already Client</span>
+                              </Badge>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => convertToClientMutation.mutate(submission)}
+                                disabled={convertToClientMutation.isPending}
+                                className="flex items-center space-x-1"
+                              >
+                                <UserPlus className="h-4 w-4" />
+                                <span>Convert to Client</span>
+                              </Button>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
