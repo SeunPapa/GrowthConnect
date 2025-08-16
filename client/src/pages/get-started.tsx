@@ -58,7 +58,7 @@ export default function GetStarted() {
 
   const submitMutation = useMutation({
     mutationFn: (data: typeof formData) => 
-      apiRequest("/api/contact", "POST", {
+      apiRequest("POST", "/api/contact", {
         name: data.name,
         email: data.email,
         message: `Business Stage: ${data.businessStage}
