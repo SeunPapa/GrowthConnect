@@ -1,4 +1,4 @@
-import { type User, type InsertUser, type ContactSubmission, type InsertContactSubmission, type Client, type InsertClient } from "@shared/schema";
+import { type User, type InsertUser, type ContactSubmission, type InsertContactSubmission, type Client, type InsertClient, type Prospect, type InsertProspect, type Interaction, type InsertInteraction } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -11,17 +11,31 @@ export interface IStorage {
   getClients(): Promise<Client[]>;
   updateClient(id: string, updateData: Partial<InsertClient>): Promise<Client | undefined>;
   deleteClient(id: string): Promise<boolean>;
+  // CRM methods
+  createProspect(insertProspect: InsertProspect): Promise<Prospect>;
+  getProspects(): Promise<Prospect[]>;
+  updateProspect(id: string, updateData: Partial<InsertProspect>): Promise<Prospect | undefined>;
+  deleteProspect(id: string): Promise<boolean>;
+  createInteraction(insertInteraction: InsertInteraction): Promise<Interaction>;
+  getInteractionsByProspect(prospectId: string): Promise<Interaction[]>;
+  getAllInteractions(): Promise<Interaction[]>;
+  updateInteraction(id: string, updateData: Partial<InsertInteraction>): Promise<Interaction | undefined>;
+  deleteInteraction(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
   private contactSubmissions: Map<string, ContactSubmission>;
   private clients: Map<string, Client>;
+  private prospects: Map<string, Prospect>;
+  private interactions: Map<string, Interaction>;
 
   constructor() {
     this.users = new Map();
     this.contactSubmissions = new Map();
     this.clients = new Map();
+    this.prospects = new Map();
+    this.interactions = new Map();
     
     // Add sample data for demonstration
     this.seedSampleData();
@@ -107,6 +121,76 @@ export class MemStorage implements IStorage {
     sampleClients.forEach(client => {
       this.clients.set(client.id, client as Client);
     });
+
+    // Sample prospects
+    const sampleProspects = [
+      {
+        id: "prospect-1",
+        submissionId: "sub-1",
+        name: "Sarah Johnson",
+        email: "sarah@innovatetech.co.uk",
+        company: "InnovateTech Ltd",
+        status: "qualified",
+        priority: "high",
+        source: "consultation_form",
+        nextFollowUpDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
+        assignedTo: "admin",
+        notes: "Very promising tech startup. Ready to move forward with startup package.",
+        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: "prospect-2",
+        submissionId: "sub-2",
+        name: "Marcus Thompson", 
+        email: "marcus@greenventures.co.uk",
+        company: "Green Ventures",
+        status: "contacted",
+        priority: "medium",
+        source: "consultation_form",
+        nextFollowUpDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+        assignedTo: "admin",
+        notes: "Interested in growth package. Sustainable products business with good revenue.",
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      }
+    ];
+
+    // Sample interactions
+    const sampleInteractions = [
+      {
+        id: "int-1",
+        prospectId: "prospect-1",
+        type: "call",
+        subject: "Initial Discovery Call",
+        content: "45-minute discovery call with Sarah. Discussed startup vision, current challenges, and how our services can help. Very engaged and interested in moving forward.",
+        outcome: "positive",
+        nextAction: "Send proposal with startup package details",
+        nextActionDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+        createdBy: "admin",
+      },
+      {
+        id: "int-2",
+        prospectId: "prospect-2",
+        type: "email",
+        subject: "Follow-up on growth package inquiry",
+        content: "Sent detailed information about growth accelerator package. Included case studies and pricing structure.",
+        outcome: "follow_up_needed",
+        nextAction: "Schedule call to discuss proposal",
+        nextActionDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+        createdBy: "admin",
+      }
+    ];
+
+    sampleProspects.forEach(prospect => {
+      this.prospects.set(prospect.id, prospect as Prospect);
+    });
+
+    sampleInteractions.forEach(interaction => {
+      this.interactions.set(interaction.id, interaction as Interaction);
+    });
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -184,6 +268,96 @@ export class MemStorage implements IStorage {
 
   async deleteClient(id: string): Promise<boolean> {
     return this.clients.delete(id);
+  }
+
+  // CRM Methods
+  async createProspect(insertProspect: InsertProspect): Promise<Prospect> {
+    const id = randomUUID();
+    const now = new Date();
+    const prospect: Prospect = {
+      ...insertProspect,
+      status: insertProspect.status || "new",
+      priority: insertProspect.priority || "medium",
+      source: insertProspect.source || "consultation_form",
+      submissionId: insertProspect.submissionId || null,
+      company: insertProspect.company || null,
+      nextFollowUpDate: insertProspect.nextFollowUpDate || null,
+      assignedTo: insertProspect.assignedTo || null,
+      notes: insertProspect.notes || null,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.prospects.set(id, prospect);
+    return prospect;
+  }
+
+  async getProspects(): Promise<Prospect[]> {
+    return Array.from(this.prospects.values()).sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+  }
+
+  async updateProspect(id: string, updateData: Partial<InsertProspect>): Promise<Prospect | undefined> {
+    const prospect = this.prospects.get(id);
+    if (!prospect) return undefined;
+    
+    const updatedProspect: Prospect = {
+      ...prospect,
+      ...updateData,
+      updatedAt: new Date(),
+    };
+    this.prospects.set(id, updatedProspect);
+    return updatedProspect;
+  }
+
+  async deleteProspect(id: string): Promise<boolean> {
+    return this.prospects.delete(id);
+  }
+
+  async createInteraction(insertInteraction: InsertInteraction): Promise<Interaction> {
+    const id = randomUUID();
+    const interaction: Interaction = {
+      ...insertInteraction,
+      prospectId: insertInteraction.prospectId || null,
+      subject: insertInteraction.subject || null,
+      outcome: insertInteraction.outcome || null,
+      nextAction: insertInteraction.nextAction || null,
+      nextActionDate: insertInteraction.nextActionDate || null,
+      createdBy: insertInteraction.createdBy || "admin",
+      id,
+      createdAt: new Date(),
+    };
+    this.interactions.set(id, interaction);
+    return interaction;
+  }
+
+  async getInteractionsByProspect(prospectId: string): Promise<Interaction[]> {
+    return Array.from(this.interactions.values())
+      .filter(interaction => interaction.prospectId === prospectId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async getAllInteractions(): Promise<Interaction[]> {
+    return Array.from(this.interactions.values()).sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
+  }
+
+  async updateInteraction(id: string, updateData: Partial<InsertInteraction>): Promise<Interaction | undefined> {
+    const interaction = this.interactions.get(id);
+    if (!interaction) return undefined;
+    
+    const updatedInteraction: Interaction = {
+      ...interaction,
+      ...updateData,
+    };
+    this.interactions.set(id, updatedInteraction);
+    return updatedInteraction;
+  }
+
+  async deleteInteraction(id: string): Promise<boolean> {
+    return this.interactions.delete(id);
   }
 }
 

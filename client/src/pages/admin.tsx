@@ -212,15 +212,25 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600 mt-2">Manage your business consultations and clients</p>
           </div>
-          <Button 
-            onClick={() => testEmailMutation.mutate()}
-            disabled={testEmailMutation.isPending}
-            variant="outline"
-            className="flex items-center space-x-2"
-          >
-            <Mail className="h-4 w-4" />
-            <span>{testEmailMutation.isPending ? "Testing..." : "Test Email"}</span>
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              onClick={() => window.location.href = '/crm'}
+              variant="default"
+              className="flex items-center space-x-2"
+            >
+              <Users className="h-4 w-4" />
+              <span>Open CRM</span>
+            </Button>
+            <Button 
+              onClick={() => testEmailMutation.mutate()}
+              disabled={testEmailMutation.isPending}
+              variant="outline"
+              className="flex items-center space-x-2"
+            >
+              <Mail className="h-4 w-4" />
+              <span>{testEmailMutation.isPending ? "Testing..." : "Test Email"}</span>
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
