@@ -77,10 +77,12 @@ export default function AdminDashboard() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null);
   const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
+  const [selectedProspectDetail, setSelectedProspectDetail] = useState<Prospect | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isProspectDialogOpen, setIsProspectDialogOpen] = useState(false);
   const [isInteractionDialogOpen, setIsInteractionDialogOpen] = useState(false);
   const [isSubmissionDetailOpen, setIsSubmissionDetailOpen] = useState(false);
+  const [isProspectDetailOpen, setIsProspectDetailOpen] = useState(false);
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -624,7 +626,17 @@ export default function AdminDashboard() {
                       const prospectInteractions = getProspectInteractions(prospect.id);
                       return (
                         <TableRow key={prospect.id}>
-                          <TableCell className="font-medium">{prospect.name}</TableCell>
+                          <TableCell className="font-medium">
+                            <button
+                              onClick={() => {
+                                setSelectedProspectDetail(prospect);
+                                setIsProspectDetailOpen(true);
+                              }}
+                              className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            >
+                              {prospect.name}
+                            </button>
+                          </TableCell>
                           <TableCell>{prospect.company || "-"}</TableCell>
                           <TableCell>
                             <Badge variant={getStatusBadgeVariant(prospect.status)}>
@@ -1267,6 +1279,236 @@ export default function AdminDashboard() {
                   <Button 
                     variant="outline" 
                     onClick={() => setIsSubmissionDetailOpen(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Prospect Detail Dialog */}
+        <Dialog open={isProspectDetailOpen} onOpenChange={setIsProspectDetailOpen}>
+          <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Prospect Details & Interactions</DialogTitle>
+            </DialogHeader>
+            {selectedProspectDetail && (
+              <div className="space-y-6">
+                {/* Prospect Information */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold mb-3">Prospect Information</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Name</Label>
+                      <p className="text-lg font-semibold">{selectedProspectDetail.name}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Email</Label>
+                      <p className="text-lg">{selectedProspectDetail.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Company</Label>
+                      <p>{selectedProspectDetail.company || "Not specified"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Source</Label>
+                      <p>{selectedProspectDetail.source || "Unknown"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Status</Label>
+                      <Badge variant={getStatusBadgeVariant(selectedProspectDetail.status)}>
+                        {selectedProspectDetail.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-500">Priority</Label>
+                      <span className={getPriorityColor(selectedProspectDetail.priority)}>
+                        {selectedProspectDetail.priority.toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <Label className="text-sm font-medium text-gray-500">Next Follow-up</Label>
+                    <p className="text-sm">
+                      {selectedProspectDetail.nextFollowUpDate ? 
+                        new Date(selectedProspectDetail.nextFollowUpDate).toLocaleDateString('en-GB', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : "Not scheduled"
+                      }
+                    </p>
+                  </div>
+                  {selectedProspectDetail.notes && (
+                    <div className="mt-4">
+                      <Label className="text-sm font-medium text-gray-500">Notes</Label>
+                      <div className="mt-1 p-3 bg-white rounded border text-sm">
+                        {selectedProspectDetail.notes}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Original Submission (if linked) */}
+                {selectedProspectDetail.submissionId && (() => {
+                  const originalSubmission = submissions.find(s => s.id === selectedProspectDetail.submissionId);
+                  return originalSubmission ? (
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h3 className="text-lg font-semibold mb-3">Original Consultation Request</h3>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Submitted</Label>
+                          <p className="text-sm">
+                            {new Date(originalSubmission.createdAt).toLocaleDateString('en-GB', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-500">Package Interest</Label>
+                          <div>
+                            {originalSubmission.package ? (
+                              <Badge variant="secondary" className="text-xs">
+                                {originalSubmission.package === 'startup' && 'Startup Solutions'}
+                                {originalSubmission.package === 'growth' && 'Growth Accelerator'}
+                                {originalSubmission.package === 'ongoing' && 'Ongoing Support'}
+                                {!['startup', 'growth', 'ongoing'].includes(originalSubmission.package) && originalSubmission.package}
+                              </Badge>
+                            ) : (
+                              <span className="text-gray-500 text-xs">No preference</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-500">Original Message</Label>
+                        <div className="mt-1 p-3 bg-white rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                          {originalSubmission.message}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+
+                {/* Interactions History */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-lg font-semibold">Interaction History</h3>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        interactionForm.reset({ 
+                          prospectId: selectedProspectDetail.id,
+                          type: "call",
+                          content: ""
+                        });
+                        setIsInteractionDialogOpen(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Interaction
+                    </Button>
+                  </div>
+                  
+                  {(() => {
+                    const prospectInteractions = getProspectInteractions(selectedProspectDetail.id);
+                    return prospectInteractions.length > 0 ? (
+                      <div className="space-y-3">
+                        {prospectInteractions.map((interaction) => (
+                          <div key={interaction.id} className="bg-white p-4 rounded border">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex items-center space-x-2">
+                                {getInteractionIcon(interaction.type)}
+                                <span className="font-medium capitalize">{interaction.type}</span>
+                                {interaction.subject && (
+                                  <span className="text-gray-600">- {interaction.subject}</span>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {new Date(interaction.createdAt).toLocaleDateString('en-GB')}
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-700 mb-2 whitespace-pre-wrap">
+                              {interaction.content}
+                            </p>
+                            {interaction.outcome && (
+                              <div className="flex items-center justify-between">
+                                <Badge 
+                                  variant={interaction.outcome === "positive" ? "default" : 
+                                          interaction.outcome === "negative" ? "destructive" : "outline"}
+                                  className="text-xs"
+                                >
+                                  {interaction.outcome}
+                                </Badge>
+                                {interaction.nextAction && (
+                                  <div className="text-xs text-gray-600">
+                                    <span className="font-medium">Next:</span> {interaction.nextAction}
+                                    {interaction.nextActionDate && (
+                                      <span className="ml-2">
+                                        ({new Date(interaction.nextActionDate).toLocaleDateString('en-GB')})
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p>No interactions recorded yet</p>
+                        <p className="text-sm">Click "Add Interaction" to log your first contact</p>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex justify-between pt-4 border-t">
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedProspect(selectedProspectDetail);
+                        prospectForm.reset({
+                          ...selectedProspectDetail,
+                          nextFollowUpDate: selectedProspectDetail.nextFollowUpDate ? 
+                            new Date(selectedProspectDetail.nextFollowUpDate).toISOString().split('T')[0] : ""
+                        });
+                        setIsProspectDialogOpen(true);
+                        setIsProspectDetailOpen(false);
+                      }}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Details
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        interactionForm.reset({ 
+                          prospectId: selectedProspectDetail.id,
+                          type: "call",
+                          content: ""
+                        });
+                        setIsInteractionDialogOpen(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Log Interaction
+                    </Button>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsProspectDetailOpen(false)}
                   >
                     Close
                   </Button>
