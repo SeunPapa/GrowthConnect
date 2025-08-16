@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface FormData {
   businessStage: string;
@@ -51,11 +54,58 @@ export default function GetStarted() {
     }
   };
 
+  const { toast } = useToast();
+
+  const submitMutation = useMutation({
+    mutationFn: (data: typeof formData) => 
+      apiRequest("/api/contact", "POST", {
+        name: data.name,
+        email: data.email,
+        message: `Business Stage: ${data.businessStage}
+Business Type: ${data.businessType}  
+Main Goal: ${data.mainGoal}
+Timeline: ${data.timeframe}
+Budget: ${data.budget}
+Business Name: ${data.businessName || 'Not provided'}
+Additional Info: ${data.additionalInfo || 'None provided'}`,
+        package: getPackageFromGoal(data.mainGoal)
+      }),
+    onSuccess: () => {
+      toast({ 
+        title: "Consultation booked successfully!", 
+        description: "We'll contact you within 24 hours to schedule your free consultation."
+      });
+      setLocation("/#contact");
+    },
+    onError: () => {
+      toast({ 
+        title: "Submission failed", 
+        description: "Please try again or contact us directly.",
+        variant: "destructive" 
+      });
+    },
+  });
+
+  const getPackageFromGoal = (goal: string) => {
+    switch (goal) {
+      case "plan":
+      case "launch": 
+      case "structure":
+        return "startup";
+      case "scale":
+      case "optimize":
+        return "growth";
+      case "marketing":
+      case "funding":
+        return "ongoing";
+      default:
+        return null;
+    }
+  };
+
   const handleSubmit = () => {
-    // Here you would typically send the data to your backend
     console.log("Form submitted:", formData);
-    // Navigate to a thank you page or contact section
-    setLocation("/#contact");
+    submitMutation.mutate(formData);
   };
 
   const isStepValid = () => {
@@ -290,11 +340,11 @@ export default function GetStarted() {
               ) : (
                 <Button
                   onClick={handleSubmit}
-                  disabled={!isStepValid()}
+                  disabled={!isStepValid() || submitMutation.isPending}
                   className="bg-primary text-white hover:bg-secondary flex items-center gap-2"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  Book My Free Consultation
+                  {submitMutation.isPending ? "Submitting..." : "Book My Free Consultation"}
                 </Button>
               )}
             </div>
