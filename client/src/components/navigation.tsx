@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useLocation } from "wouter";
-import logoImage from "@assets/generated_images/Growth_Accelerators_business_logo_fd30a20d.png";
+import logoImage from "@assets/generated_images/Single_Growth_Accelerators_logo_74f8b29f.png";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
