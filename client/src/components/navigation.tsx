@@ -22,11 +22,11 @@ export default function Navigation() {
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
+          <div className="flex items-center py-2">
             <img 
               src={logoImage} 
               alt="Growth Accelerators" 
-              className="h-16 w-auto max-w-md"
+              className="h-12 w-auto max-w-lg object-contain"
             />
           </div>
           
