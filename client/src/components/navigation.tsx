@@ -26,7 +26,7 @@ export default function Navigation() {
             <img 
               src={logoImage} 
               alt="Growth Accelerators" 
-              className="h-12 w-auto max-w-xs"
+              className="h-16 w-auto max-w-md"
             />
           </div>
           
