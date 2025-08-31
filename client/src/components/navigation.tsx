@@ -22,12 +22,15 @@ export default function Navigation() {
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-3 overflow-visible">
+          <div className="flex items-center overflow-visible">
             <img 
               src={logoImage} 
               alt="Growth Accelerators" 
               className="h-14 w-auto max-w-xs object-contain"
             />
+          </div>
+
+          <div className="flex-1 flex justify-center">
             <span className="text-2xl font-bold text-primary">The Growth Accelerators</span>
           </div>
           
