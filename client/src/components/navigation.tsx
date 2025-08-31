@@ -28,7 +28,7 @@ export default function Navigation() {
               alt="Growth Accelerators" 
               className="h-14 w-auto max-w-xs object-contain"
             />
-            <span className="text-2xl font-bold text-primary">Growth Accelerators</span>
+            <span className="text-2xl font-bold text-primary">The Growth Accelerators</span>
           </div>
           
           <div className="hidden md:block">
