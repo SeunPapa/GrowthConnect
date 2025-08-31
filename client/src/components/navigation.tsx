@@ -21,7 +21,7 @@ export default function Navigation() {
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-center items-center h-16 relative">
+        <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3 overflow-visible">
             <img 
               src={logoImage} 
@@ -31,7 +31,7 @@ export default function Navigation() {
             <span className="text-2xl font-bold text-primary">The Growth Accelerators</span>
           </div>
           
-          <div className="hidden md:block absolute right-0">
+          <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <button 
                 onClick={() => scrollToSection("home")}
