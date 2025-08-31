@@ -249,15 +249,10 @@ export default function StartupSolutions() {
             Discover how our Startup Solutions package can help validate your business idea and create a roadmap for success. 
             No commitment required.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex justify-center">
             <Link href="/#contact">
               <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-neutral-100">
                 Book Free Consultation
-              </Button>
-            </Link>
-            <Link href="/">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
-                View All Packages
               </Button>
             </Link>
           </div>
