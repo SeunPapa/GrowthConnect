@@ -8,7 +8,14 @@ export default function Navigation() {
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: "smooth" });
+    if (element) {
+      const navHeight = 64; // h-16 = 64px
+      const elementPosition = element.offsetTop - navHeight;
+      window.scrollTo({
+        top: elementPosition,
+        behavior: "smooth"
+      });
+    }
     setMobileMenuOpen(false);
   };
 
