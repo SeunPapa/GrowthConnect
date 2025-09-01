@@ -46,7 +46,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Startup Solutions Package */}
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100">
             <CardContent className="p-6">
