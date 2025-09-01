@@ -48,8 +48,8 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Startup Solutions Package */}
-          <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100">
-            <CardContent className="p-6">
+          <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100 h-full">
+            <CardContent className="p-6 h-full flex flex-col">
               <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Rocket className="h-8 w-8 text-primary" />
@@ -64,7 +64,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <p className="text-neutral-500 text-sm">Early-stage entrepreneurs with limited budgets</p>
               </div>
 
-              <ul className="space-y-2 mb-6">
+              <ul className="space-y-2 mb-6 flex-grow">
                 <li className="flex items-start">
                   <Brain className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
@@ -104,7 +104,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
 
               <Button 
                 onClick={() => handleSelectPackage("startup")}
-                className="w-full bg-primary text-white hover:bg-secondary transition-colors"
+                className="w-full bg-primary text-white hover:bg-secondary transition-colors mt-auto"
               >
                 Learn More
               </Button>
@@ -117,7 +117,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
               <Badge className="bg-primary text-white px-4 py-1">Most Popular</Badge>
             </div>
             
-            <CardContent className="p-8">
+            <CardContent className="p-6 h-full flex flex-col">
               <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <TrendingUp className="h-8 w-8 text-primary" />
@@ -176,7 +176,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
 
               <Button 
                 onClick={() => handleSelectPackage("growth")}
-                className="w-full bg-primary text-white hover:bg-secondary transition-colors"
+                className="w-full bg-primary text-white hover:bg-secondary transition-colors mt-auto"
               >
                 Learn More
               </Button>
@@ -184,8 +184,8 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
           </Card>
 
           {/* Ongoing Support Package */}
-          <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100">
-            <CardContent className="p-6">
+          <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100 h-full">
+            <CardContent className="p-6 h-full flex flex-col">
               <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <RotateCcw className="h-8 w-8 text-primary" />
@@ -226,7 +226,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
 
               <Button 
                 onClick={() => handleSelectPackage("ongoing")}
-                className="w-full bg-primary text-white hover:bg-secondary transition-colors"
+                className="w-full bg-primary text-white hover:bg-secondary transition-colors mt-auto"
               >
                 Learn More
               </Button>
