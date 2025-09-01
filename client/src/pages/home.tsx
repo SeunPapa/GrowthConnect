@@ -3,6 +3,7 @@ import HeroSection from "@/components/hero-section";
 import ServicePackages from "@/components/service-packages";
 import ContactSection from "@/components/contact-section";
 import { CheckCircle, Rocket, Lightbulb, Star } from "lucide-react";
+import { FaLinkedin, FaInstagram, FaFacebook } from "react-icons/fa";
 import { useLocation } from "wouter";
 
 export default function Home() {
@@ -149,13 +150,13 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-6">
               <a href="#" className="text-neutral-400 hover:text-white transition-colors">
-                LinkedIn
+                <FaLinkedin className="h-6 w-6" />
               </a>
               <a href="#" className="text-neutral-400 hover:text-white transition-colors">
-                Instagram
+                <FaInstagram className="h-6 w-6" />
               </a>
               <a href="#" className="text-neutral-400 hover:text-white transition-colors">
-                Facebook
+                <FaFacebook className="h-6 w-6" />
               </a>
             </div>
           </div>
