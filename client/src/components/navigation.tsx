@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { TrendingUp, Menu, X } from "lucide-react";
 import { useLocation } from "wouter";
-import logoImage from "@assets/generated_images/Cropped_Growth_Accelerators_logo_68ff9658.png";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,12 +21,9 @@ export default function Navigation() {
     <nav className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center overflow-visible">
-            <img 
-              src={logoImage} 
-              alt="Growth Accelerators" 
-              className="h-14 w-auto max-w-xs object-contain"
-            />
+          <div className="flex items-center">
+            <TrendingUp className="h-8 w-8 text-primary" />
+            <span className="ml-2 text-xl font-bold text-neutral-900">Growth Accelerators</span>
           </div>
           
           <div className="hidden md:block">
