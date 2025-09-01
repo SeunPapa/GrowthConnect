@@ -152,7 +152,7 @@ export default function Home() {
                 LinkedIn
               </a>
               <a href="#" className="text-neutral-400 hover:text-white transition-colors">
-                Twitter
+                Instagram
               </a>
               <a href="#" className="text-neutral-400 hover:text-white transition-colors">
                 Facebook
