@@ -35,9 +35,9 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
   };
 
   return (
-    <section id="packages" className="py-20 bg-neutral-50">
+    <section id="packages" className="py-12 bg-neutral-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
             Choose Your Growth Package
           </h2>
@@ -49,8 +49,8 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Startup Solutions Package */}
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100">
-            <CardContent className="p-8">
-              <div className="text-center mb-6">
+            <CardContent className="p-6">
+              <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Rocket className="h-8 w-8 text-primary" />
                 </div>
@@ -59,12 +59,12 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <div className="text-3xl font-bold text-primary">From £750</div>
               </div>
               
-              <div className="mb-6">
+              <div className="mb-4">
                 <p className="text-sm font-semibold text-neutral-900 mb-3">Perfect for:</p>
                 <p className="text-neutral-500 text-sm">Early-stage entrepreneurs with limited budgets</p>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-6">
                 <li className="flex items-start">
                   <Brain className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
@@ -118,7 +118,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
             </div>
             
             <CardContent className="p-8">
-              <div className="text-center mb-6">
+              <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <TrendingUp className="h-8 w-8 text-primary" />
                 </div>
@@ -127,7 +127,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <div className="text-3xl font-bold text-primary">From £2000</div>
               </div>
               
-              <div className="mb-6">
+              <div className="mb-4">
                 <p className="text-sm font-semibold text-neutral-900 mb-3">Perfect for:</p>
                 <p className="text-neutral-500 text-sm">Entrepreneurs ready to launch or scale</p>
               </div>
@@ -136,7 +136,7 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <p className="text-sm font-medium text-accent">Everything in Startup Solutions, PLUS:</p>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-6">
                 <li className="flex items-start">
                   <BarChart3 className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
@@ -185,8 +185,8 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
 
           {/* Ongoing Support Package */}
           <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-neutral-100">
-            <CardContent className="p-8">
-              <div className="text-center mb-6">
+            <CardContent className="p-6">
+              <div className="text-center mb-4">
                 <div className="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                   <RotateCcw className="h-8 w-8 text-primary" />
                 </div>
@@ -195,12 +195,12 @@ export default function ServicePackages({ onSelectPackage }: ServicePackagesProp
                 <div className="text-2xl font-bold text-primary">Custom Pricing</div>
               </div>
               
-              <div className="mb-6">
+              <div className="mb-4">
                 <p className="text-sm font-semibold text-neutral-900 mb-3">Perfect for:</p>
                 <p className="text-neutral-500 text-sm">Businesses needing continuous guidance</p>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 mb-6">
                 <li className="flex items-start">
                   <RotateCcw className="h-5 w-5 text-accent mr-3 mt-1 flex-shrink-0" />
                   <div>
