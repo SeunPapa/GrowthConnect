@@ -74,7 +74,7 @@ Next Steps: Review this submission in your admin dashboard and follow up with th
     `;
 
     const mailOptions = {
-      from: process.env.GMAIL_USER,
+      from: 'georgie@thegrowthaccelerators.co.uk',
       to: 'georgie@thegrowthaccelerators.co.uk',
       subject: `New Consultation Request from ${submission.name}`,
       text: emailText,
@@ -82,7 +82,7 @@ Next Steps: Review this submission in your admin dashboard and follow up with th
     };
 
     console.log('📧 Sending email with options:', {
-      from: process.env.GMAIL_USER,
+      from: 'georgie@thegrowthaccelerators.co.uk',
       to: 'georgie@thegrowthaccelerators.co.uk',
       subject: mailOptions.subject
     });
